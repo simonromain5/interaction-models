@@ -1,0 +1,1036 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html4" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Welcome to Random Walks’s documentation! &mdash; Random Walks  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="#" class="icon icon-home"> Random Walks
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">Welcome to Random Walks’s documentation!</a></li>
+<li><a class="reference internal" href="#module-brownian">Brownian motion</a></li>
+<li><a class="reference internal" href="#module-ballisticwithstop">Ballistic motion with stop</a></li>
+<li><a class="reference internal" href="#module-activebrownianparticles">Active brownian motion</a></li>
+<li><a class="reference internal" href="#module-animate">Animation</a></li>
+<li><a class="reference internal" href="#module-tij">TIJ interpreter</a></li>
+<li><a class="reference internal" href="#module-common_calc">Common calulations</a></li>
+<li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
+</ul>
+</div>
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">Random Walks</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="#" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Welcome to Random Walks’s documentation!</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="welcome-to-random-walks-s-documentation">
+<h1>Welcome to Random Walks’s documentation!<a class="headerlink" href="#welcome-to-random-walks-s-documentation" title="Permalink to this headline">¶</a></h1>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">In this library, we introduce several models of random walks. They are used to reproduce human movement in closed space.</p>
+</div>
+<div class="toctree-wrapper compound">
+</div>
+</div>
+<div class="section" id="module-brownian">
+<span id="brownian-motion"></span><h1>Brownian motion<a class="headerlink" href="#module-brownian" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="brownian.BrownianMotion">
+<em class="property">class </em><code class="descclassname">brownian.</code><code class="descname">BrownianMotion</code><span class="sig-paren">(</span><em>dt</em>, <em>radius</em>, <em>n_particles</em>, <em>surface</em>, <em>n_steps</em><span class="sig-paren">)</span><a class="headerlink" href="#brownian.BrownianMotion" title="Permalink to this definition">¶</a></dt>
+<dd><p>This class represents the Brownian motion of particles in 2 dimensions. The motion of the particles is restricted in
+a box. We consider the particles as ghost particles: they can intermingle.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>dt</strong> (<em>float</em><em> or </em><em>int</em>) – Increment of time for each step. Constant * dt is the variance of the normal distribution that we use to calculate the increment of all the positions at each step.</li>
+<li><strong>radius</strong> (<em>float</em><em> or </em><em>int</em>) – radius of the particles. It as constant for all the particles</li>
+<li><strong>n_particles</strong> (<em>int</em>) – Number of particles in the box</li>
+<li><strong>surface</strong> (<em>float</em><em> or </em><em>int</em>) – Surface of the box. We consider the box as a square, hence the length of the side is equal to the square root of the surface.</li>
+<li><strong>n_steps</strong> (<em>int</em>) – Number of steps that we consider for the total movement of the particles.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="brownian.BrownianMotion.brown_iter_2d">
+<code class="descname">brown_iter_2d</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#brownian.BrownianMotion.brown_iter_2d" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an array of the increment of the next position of the particles (dx, dy). As we consider a Brownian
+motion, the increment follows a 2D gaussian law of mean 0 and of variance dt.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Returns an array of the increment of the next position of the particles (dx, dy). It is of shape (n_particles, 2)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">np.array</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="brownian.BrownianMotion.creation_tij">
+<code class="descname">creation_tij</code><span class="sig-paren">(</span><em>step</em><span class="sig-paren">)</span><a class="headerlink" href="#brownian.BrownianMotion.creation_tij" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function extend the tij array of all the interactions between particle i and j at time step*dt.
+This function principal role is to find the array of neighbors in a 2 * self.radius radius.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>step</strong> (<em>int</em>) – step of the iteration. It ranges from 0 to self.n_steps-1</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="brownian.BrownianMotion.get_position">
+<code class="descname">get_position</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#brownian.BrownianMotion.get_position" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the positions of all the particles.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">An array of the positions of all the particles. It is of shape (n_particles, 2)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">np.array</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="brownian.BrownianMotion.get_radius">
+<code class="descname">get_radius</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#brownian.BrownianMotion.get_radius" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the radius of all the particles.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Radius of the particles. It is the same for all the particles</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">float</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="brownian.BrownianMotion.get_side">
+<code class="descname">get_side</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#brownian.BrownianMotion.get_side" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the length of the side of the box.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Length of the side of the box</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">float</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="brownian.BrownianMotion.iter_movement">
+<code class="descname">iter_movement</code><span class="sig-paren">(</span><em>step</em>, <em>animation=False</em><span class="sig-paren">)</span><a class="headerlink" href="#brownian.BrownianMotion.iter_movement" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function updates the self.position_array at time step*dt. The function takes the position of the array
+(x, y) and adds a Brownian infinitesimal step (dx, dy). Hence the new position is (x+dx, y+dy). The borders of
+the box are also considered directly in the function. If after iteration, x+dx or y+dy is inferior to 0 then the
+position is updated to x+dx=0 or y+dy=0 respectively. If after iteration, x+dx or y+dy is superior to self.side
+then the position is updated to x+dx=self.side or y+dy=self.side respectively.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>step</strong> (<em>int</em>) – step of the iteration. It ranges from 0 to self.n_steps-1</li>
+<li><strong>animation</strong> (<em>bool</em><em>, </em><em>optional</em>) – This parameter is set to False by default. This means that the creation_tij array is stored and can be analyzed. It is set to true only when the animation is run. As the animation can run indefinitely, too much data can be stored</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="brownian.BrownianMotion.total_movement">
+<code class="descname">total_movement</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#brownian.BrownianMotion.total_movement" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function iterates all the Brownian motion throughout the n_steps and returns the tij array to be analyzed</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Returns the tij array. It represents all the interactions between particles i and j at time t</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">np.array</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-ballisticwithstop">
+<span id="ballistic-motion-with-stop"></span><h1>Ballistic motion with stop<a class="headerlink" href="#module-ballisticwithstop" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="ballisticwithstop.BallStop">
+<em class="property">class </em><code class="descclassname">ballisticwithstop.</code><code class="descname">BallStop</code><span class="sig-paren">(</span><em>v</em>, <em>dt</em>, <em>radius</em>, <em>n_particles</em>, <em>surface</em>, <em>n_steps</em>, <em>brownian=False</em><span class="sig-paren">)</span><a class="headerlink" href="#ballisticwithstop.BallStop" title="Permalink to this definition">¶</a></dt>
+<dd><p>This class represents the ballistic motion of particles in 2 dimensions with a stop at each contact. The motion of
+the particles is restricted in a box and is not elastic. When two particles are in contact, their new velocity
+vectors are taken randomly. One of the option of the class is to set brownian to True. In this case, the particle
+will ally ballistic motion and a brownian motion.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>v</strong> (<em>float</em><em> or </em><em>int</em>) – Speed of the particle</li>
+<li><strong>dt</strong> (<em>float</em><em> or </em><em>int</em>) – Increment of time for each step. Constant * dt is the variance of the normal distribution that we use to calculate the increment of all the positions at each step.</li>
+<li><strong>radius</strong> (<em>float</em><em> or </em><em>int</em>) – radius of the particles. It as constant for all the particles</li>
+<li><strong>n_particles</strong> (<em>int</em>) – Number of particles in the box</li>
+<li><strong>surface</strong> (<em>float</em><em> or </em><em>int</em>) – Surface of the box. We consider the box as a square, hence the length of the side is equal to the square root of the surface.</li>
+<li><strong>n_steps</strong> (<em>int</em>) – Number of steps that we consider for the total movement of the particles.</li>
+<li><strong>brownian</strong> (<em>bool</em><em>, </em><em>optional</em>) – Adds a brownian motion to the particles if set to True</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="ballisticwithstop.BallStop.border">
+<code class="descname">border</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ballisticwithstop.BallStop.border" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function sets to 0 the velocity of a particle that goes out of the box. The particle doesn’t move out of
+the border until the randomly chosen perpendicular velocity to the border makes the particle reenter the box.
+The particle can glide on the border.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ballisticwithstop.BallStop.contact">
+<code class="descname">contact</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ballisticwithstop.BallStop.contact" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function determines if one particle is in contact with other particles in the system.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A tuple of length 2. First, the neighbors array for each particle in contact and second, the respective
+index of each element in the main self.position_array.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">tuple of np.arrays.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ballisticwithstop.BallStop.creation_tij">
+<code class="descname">creation_tij</code><span class="sig-paren">(</span><em>step</em><span class="sig-paren">)</span><a class="headerlink" href="#ballisticwithstop.BallStop.creation_tij" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function extend the tij array of all the interactions between particle i and j at time step*dt.
+This function principal role is to find the array of neighbors in a 2 * self.radius radius.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>step</strong> (<em>int</em>) – step of the iteration. It ranges from 0 to self.n_steps-1</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ballisticwithstop.BallStop.get_position">
+<code class="descname">get_position</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ballisticwithstop.BallStop.get_position" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the positions of all the particles.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">An array of the positions of all the particles. It is of shape (n_particles, 2).`</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">np.array</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ballisticwithstop.BallStop.get_radius">
+<code class="descname">get_radius</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ballisticwithstop.BallStop.get_radius" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the radius of all the particles.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Radius of the particles. It is the same for all the particles.`</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">float</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ballisticwithstop.BallStop.get_side">
+<code class="descname">get_side</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ballisticwithstop.BallStop.get_side" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the length of the side of the box.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Length of the side of the box.`</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">float</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ballisticwithstop.BallStop.initial_positions">
+<code class="descname">initial_positions</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ballisticwithstop.BallStop.initial_positions" title="Permalink to this definition">¶</a></dt>
+<dd><p>This functions returns the initial position array of the particles. They are chosen randomly from an uniform
+distribution: 0 + self.radius &lt;= x, y &lt;= self.side - self.radius. One of the complications is that we do not
+want overlapping of the particles.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">array of the initial positions of shape (self.n_particles, 2)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">np.array</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ballisticwithstop.BallStop.iter_movement">
+<code class="descname">iter_movement</code><span class="sig-paren">(</span><em>step</em>, <em>animation=False</em><span class="sig-paren">)</span><a class="headerlink" href="#ballisticwithstop.BallStop.iter_movement" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function updates the self.position_array at time step*dt. The function takes the position of the array
+(x, y) and adds a ballistic infinitesimal step (dx, dy). Hence the new position is (x+dx, y+dy). The borders of
+the box are also considered with the self.border() function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>step</strong> (<em>int</em>) – step of the iteration. It ranges from 0 to self.n_steps-1</li>
+<li><strong>animation</strong> (<em>bool</em><em>, </em><em>optional</em>) – This parameter is set to False by default. This means that the creation_tij array is stored and can be analyzed. It is set to true only when the animation is run. As the animation can run indefinitely, too much data can be stored</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ballisticwithstop.BallStop.random_velocities">
+<code class="descname">random_velocities</code><span class="sig-paren">(</span><em>index</em><span class="sig-paren">)</span><a class="headerlink" href="#ballisticwithstop.BallStop.random_velocities" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function updates the velocities of the particles in index. The x and y components are chosen randomly but
+are subject to one constraint, the norm of all the new velocities is equal to self.v.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>index</strong> (<em>np.array</em>) – index of the velocities to update</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ballisticwithstop.BallStop.total_movement">
+<code class="descname">total_movement</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ballisticwithstop.BallStop.total_movement" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function iterates all the ballistic motion throughout the n_steps and returns the tij array to be analyzed</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Returns the tij array. It represents all the interactions between particles i and j at time t</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">np.array</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ballisticwithstop.BallStop.update_velocities">
+<code class="descname">update_velocities</code><span class="sig-paren">(</span><em>contact_neighbors</em>, <em>contact_index</em><span class="sig-paren">)</span><a class="headerlink" href="#ballisticwithstop.BallStop.update_velocities" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function updates the velocities of all the particles. For all the particles that are not in contact with
+another particle, then their velocities are not updated, unless self.brownian is set to True (The particles will
+have a brownian motion). For all the particles that are in contact with another particle, then their velocities
+are updated randomly. Consider two particles i and j, and the vector u that link the center of i with the center
+of j. If the new velocities vi and vj are such as u.vi &lt;= 0 &lt;= u.vj, then the particles keep these velocities.
+Else, vi and vj are set to 0. The probability that two particles part from each other is 1/4.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>contact_neighbors</strong> (<em>np.array of list</em>) – Contact_neighbors[i] lists all the neighbors of particle contact_index[i]</li>
+<li><strong>contact_index</strong> (<em>np.array</em>) – index of the real indexes of the particles in contact</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-activebrownianparticles">
+<span id="active-brownian-motion"></span><h1>Active brownian motion<a class="headerlink" href="#module-activebrownianparticles" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="activebrownianparticles.Vicsek">
+<em class="property">class </em><code class="descclassname">activebrownianparticles.</code><code class="descname">Vicsek</code><span class="sig-paren">(</span><em>v</em>, <em>dt</em>, <em>radius</em>, <em>n_particles</em>, <em>surface</em>, <em>n_steps</em>, <em>noise</em>, <em>stop=False</em><span class="sig-paren">)</span><a class="headerlink" href="#activebrownianparticles.Vicsek" title="Permalink to this definition">¶</a></dt>
+<dd><p>This class represents the motion of particles according to the Vicsek model in 2 dimensions. The motion of the
+particles is restricted in a box and is not elastic. If stop is set to True, then the particles stop at each
+contact. In this case, they separate in the same conditions as in the BallStop class.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>v</strong> (<em>float</em><em> or </em><em>int</em>) – Speed of the particle</li>
+<li><strong>dt</strong> (<em>float</em><em> or </em><em>int</em>) – Increment of time for each step. Constant * dt is the variance of the normal distribution that we use to calculate the increment of all the positions at each step.</li>
+<li><strong>radius</strong> (<em>float</em><em> or </em><em>int</em>) – radius of the particles. It as constant for all the particles</li>
+<li><strong>n_particles</strong> (<em>int</em>) – Number of particles in the box</li>
+<li><strong>surface</strong> (<em>float</em><em> or </em><em>int</em>) – Surface of the box. We consider the box as a square, hence the length of the side is equal to the square root of the surface.</li>
+<li><strong>n_steps</strong> (<em>int</em>) – Number of steps that we consider for the total movement of the particles.</li>
+<li><strong>noise</strong> (<em>float</em>) – Adds noise to the angle of the particle</li>
+<li><strong>stop</strong> – stop the particle each time it encounters another one.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="activebrownianparticles.Vicsek.border">
+<code class="descname">border</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#activebrownianparticles.Vicsek.border" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function sets to 0 the velocity of a particle that goes out of the box. The particle doesn’t move out of
+the border until the randomly chosen perpendicular velocity to the border makes the particle reenter the box.
+The particle can glide on the border.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="activebrownianparticles.Vicsek.contact">
+<code class="descname">contact</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#activebrownianparticles.Vicsek.contact" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function determines if one particle is in contact with other particles in the system.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A tuple of length 2. First, the neighbors array for each particle in contact and second, the respective
+index of each element in the main self.position_array.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">tuple of np.arrays.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="activebrownianparticles.Vicsek.creation_tij">
+<code class="descname">creation_tij</code><span class="sig-paren">(</span><em>step</em><span class="sig-paren">)</span><a class="headerlink" href="#activebrownianparticles.Vicsek.creation_tij" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function extend the tij array of all the interactions between particle i and j at time step*dt.
+This function principal role is to find the array of neighbors in a 2 * self.radius radius.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>step</strong> (<em>int</em>) – step of the iteration. It ranges from 0 to self.n_steps-1</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="activebrownianparticles.Vicsek.get_position">
+<code class="descname">get_position</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#activebrownianparticles.Vicsek.get_position" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the positions of all the particles.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">An array of the positions of all the particles. It is of shape (n_particles, 2).`</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">np.array</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="activebrownianparticles.Vicsek.get_radius">
+<code class="descname">get_radius</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#activebrownianparticles.Vicsek.get_radius" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the radius of all the particles.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Radius of the particles. It is the same for all the particles.`</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">float</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="activebrownianparticles.Vicsek.get_side">
+<code class="descname">get_side</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#activebrownianparticles.Vicsek.get_side" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the length of the side of the box.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Length of the side of the box.`</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">float</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="activebrownianparticles.Vicsek.initial_positions">
+<code class="descname">initial_positions</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#activebrownianparticles.Vicsek.initial_positions" title="Permalink to this definition">¶</a></dt>
+<dd><p>This functions returns the initial position array of the particles. They are chosen randomly from an uniform
+distribution: 0 + self.radius &lt;= x, y &lt;= self.side - self.radius. One of the complications is that we do not
+want overlapping of the particles.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">array of the initial positions of shape (self.n_particles, 2)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">np.array</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="activebrownianparticles.Vicsek.iter_movement">
+<code class="descname">iter_movement</code><span class="sig-paren">(</span><em>step</em>, <em>animation=False</em><span class="sig-paren">)</span><a class="headerlink" href="#activebrownianparticles.Vicsek.iter_movement" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function updates the self.position_array at time step*dt. The function takes the position of the array
+(x, y) and adds a ballistic infinitesimal step (dx, dy). Hence the new position is (x+dx, y+dy). The borders of
+the box are also considered with the self.border() function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>step</strong> (<em>int</em>) – step of the iteration. It ranges from 0 to self.n_steps-1</li>
+<li><strong>animation</strong> (<em>bool</em><em>, </em><em>optional</em>) – This parameter is set to False by default. This means that the creation_tij array is stored and can be analyzed. It is set to true only when the animation is run. As the animation can run indefinitely, too much data can be stored</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="activebrownianparticles.Vicsek.mean_angle">
+<code class="descname">mean_angle</code><span class="sig-paren">(</span><em>index</em><span class="sig-paren">)</span><a class="headerlink" href="#activebrownianparticles.Vicsek.mean_angle" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function calculates the mean angle of the neighbors of each particle.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Array of angles of length n_particles</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">np.array</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="activebrownianparticles.Vicsek.random_velocities">
+<code class="descname">random_velocities</code><span class="sig-paren">(</span><em>index</em><span class="sig-paren">)</span><a class="headerlink" href="#activebrownianparticles.Vicsek.random_velocities" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function updates the velocities of the particles in index. The x and y components are chosen randomly but
+are subject to one constraint, the norm of all the new velocities is equal to self.v.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>index</strong> (<em>np.array</em>) – index of the velocities to update</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="activebrownianparticles.Vicsek.total_movement">
+<code class="descname">total_movement</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#activebrownianparticles.Vicsek.total_movement" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function iterates all the ballistic motion throughout the n_steps and returns the tij array to be analyzed</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Returns the tij array. It represents all the interactions between particles i and j at time t</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">np.array</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="activebrownianparticles.Vicsek.update_velocities">
+<code class="descname">update_velocities</code><span class="sig-paren">(</span><em>contact_neighbors=None</em>, <em>contact_index=None</em><span class="sig-paren">)</span><a class="headerlink" href="#activebrownianparticles.Vicsek.update_velocities" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function updates the velocities of each particle considering the definition of the Vicsek model. Each
+particle changes its angle to align itself with is neighbors, hence the velocities vectors are updated at each
+step.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-animate">
+<span id="animation"></span><h1>Animation<a class="headerlink" href="#module-animate" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="animate.MovementAnimation">
+<em class="property">class </em><code class="descclassname">animate.</code><code class="descname">MovementAnimation</code><span class="sig-paren">(</span><em>cl</em>, <em>side</em><span class="sig-paren">)</span><a class="headerlink" href="#animate.MovementAnimation" title="Permalink to this definition">¶</a></dt>
+<dd><p>This class represents on a canvas the movement of particles according to different models.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>cl</strong> (<em>class</em>) – model that is represented in the canvas</li>
+<li><strong>side</strong> (<em>float</em>) – length of the square canvas</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="animate.MovementAnimation.animation_movement">
+<code class="descname">animation_movement</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#animate.MovementAnimation.animation_movement" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function is the one that draws at each iteration the new position of the particles.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-tij">
+<span id="tij-interpreter"></span><h1>TIJ interpreter<a class="headerlink" href="#module-tij" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="tij.add_time">
+<code class="descclassname">tij.</code><code class="descname">add_time</code><span class="sig-paren">(</span><em>time</em>, <em>couples</em>, <em>timeline_array</em><span class="sig-paren">)</span><a class="headerlink" href="#tij.add_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function adds
+:param time:
+:param couples:
+:param timeline_array:
+:return:</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="tij.common">
+<code class="descclassname">tij.</code><code class="descname">common</code><span class="sig-paren">(</span><em>ar1</em>, <em>ar2</em><span class="sig-paren">)</span><a class="headerlink" href="#tij.common" title="Permalink to this definition">¶</a></dt>
+<dd><p>This functions returns the common rows of ar1 and ar2
+:param ar1: First array
+:type ar1: np.array
+:param ar2: Second array
+:type ar2: np.array
+:return: array of common rows
+:rtype: np.array</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="tij.conversion">
+<code class="descclassname">tij.</code><code class="descname">conversion</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="headerlink" href="#tij.conversion" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a tij.dat file into a np.array.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>path</strong> (<em>str</em>) – path of the tij.dat file</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">np.array of the tij data</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">np.array</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="tij.lost">
+<code class="descclassname">tij.</code><code class="descname">lost</code><span class="sig-paren">(</span><em>ar1</em>, <em>ar2</em><span class="sig-paren">)</span><a class="headerlink" href="#tij.lost" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function finds the rows that are in ar1 but not in ar2. These rows are called the lost rows.
+:param ar1: First array
+:type ar1: np.array
+:param ar2: Second array
+:type ar2: np.array
+:return: array of the lost rows
+:rtype: np.array</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="tij.make_hist">
+<code class="descclassname">tij.</code><code class="descname">make_hist</code><span class="sig-paren">(</span><em>quantities</em>, <em>title</em>, <em>scale='linear'</em><span class="sig-paren">)</span><a class="headerlink" href="#tij.make_hist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents 4 different quantities - contact time, inter-contact time, number of contacts and weight - in histograms.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>quantities</strong> (<em>tuple of np.arrays</em>) – tuple of the 4 quantities that are represented</li>
+<li><strong>title</strong> (<em>str</em>) – Title of the figure</li>
+<li><strong>scale</strong> (<em>str</em><em>, </em><em>optional</em>) – Scale of the plot. Can be ‘linear’ (default), ‘log’ or ‘semi-log’</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="tij.new">
+<code class="descclassname">tij.</code><code class="descname">new</code><span class="sig-paren">(</span><em>ar1</em>, <em>ar2</em><span class="sig-paren">)</span><a class="headerlink" href="#tij.new" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function finds the rows that are in ar2 but not in ar1. These rows are called the new rows.
+:param ar1: First array
+:type ar1: np.array
+:param ar2: Second array
+:type ar2: np.array
+:return: array of the lost rows
+:rtype: np.array</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="tij.quantities_calculator">
+<code class="descclassname">tij.</code><code class="descname">quantities_calculator</code><span class="sig-paren">(</span><em>timeline_array</em>, <em>dec=1</em><span class="sig-paren">)</span><a class="headerlink" href="#tij.quantities_calculator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates 4 different quantities - contact time, inter-contact time, number of contacts and weight - that are
+needed to compare and validate different models with real data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>timeline_array</strong> (<em>np.array of lists</em>) – Array of timelines.</li>
+<li><strong>dec</strong> (<em>int</em><em>, </em><em>optional</em>) – decimals to which we around the quantities. Default is equal to 1</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="tij.regroup_data">
+<code class="descclassname">tij.</code><code class="descname">regroup_data</code><span class="sig-paren">(</span><em>ar</em><span class="sig-paren">)</span><a class="headerlink" href="#tij.regroup_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function regroups the quantities with the same value and calculates the number of occurrence of the value.
+The results are then put in a array where for all i, the first element of row i is value i and the second element
+of row i is its number of occurrences.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>ar</strong> (<em>np.array</em>) – Array of all the values, of shape (n, )</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">array of shape (n’, 2) of values and counts</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">np.array</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="tij.representation">
+<code class="descclassname">tij.</code><code class="descname">representation</code><span class="sig-paren">(</span><em>quantities</em>, <em>title</em>, <em>scale='linear'</em><span class="sig-paren">)</span><a class="headerlink" href="#tij.representation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents 4 different quantities - contact time, inter-contact time, number of contacts and weight - in scatter
+plots.
+:param quantities: tuple of the 4 quantities that are represented
+:type quantities: tuple of np.arrays
+:param title: Title of the figure
+:type title: str
+:param scale: Scale of the plot. Can be ‘linear’ (default), ‘log’ or ‘semi-log’
+:type scale: str, optional</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="tij.timeline">
+<code class="descclassname">tij.</code><code class="descname">timeline</code><span class="sig-paren">(</span><em>tij_array</em>, <em>dt</em><span class="sig-paren">)</span><a class="headerlink" href="#tij.timeline" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function returns an array of timelines of interactions between all the particles. A timeline between particle
+i and j has the following form [t1, t2, t3, t4 …] with all the odd elements the time of the beginning of an
+interaction and all the even elements the time of the end of an interaction. As the interaction between i and j is
+strictly the same as the interaction between j and i the array should be symmetric, with all the diagonal elements
+equal to 0 (no interaction between i and i). In our case the array is strictly upper triangular (no need to keep in
+memory all the elements).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>tij_array</strong> (<em>np.array</em>) – Array of the tij elements, that are needed to create the timeline array</li>
+<li><strong>dt</strong> (<em>float</em><em> or </em><em>int</em>) – Increment of time for each step</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Array of timelines.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">np.array of lists</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="tij.unique">
+<code class="descclassname">tij.</code><code class="descname">unique</code><span class="sig-paren">(</span><em>ar</em><span class="sig-paren">)</span><a class="headerlink" href="#tij.unique" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function gives each unique value of an array and the number of occurrence of the value</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>ar</strong> (<em>np.array</em>) – Array that is studied</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Unique values of ar and the number of occurrences</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">tuple of np.array</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-common_calc">
+<span id="common-calulations"></span><h1>Common calulations<a class="headerlink" href="#module-common_calc" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="common_calc.find_couples">
+<code class="descclassname">common_calc.</code><code class="descname">find_couples</code><span class="sig-paren">(</span><em>neighbors</em>, <em>t</em><span class="sig-paren">)</span><a class="headerlink" href="#common_calc.find_couples" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function finds all the couples at time t. The couples are all particles i and j that are neighbors at
+a particular time.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>neighbors</strong> (<em>np.array of lists</em>) – Array of all the neighbors of particle i</li>
+<li><strong>t</strong> (<em>float</em><em> or </em><em>int</em>) – time of the iteration. It is equal to step * dt.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="common_calc.projection">
+<code class="descclassname">common_calc.</code><code class="descname">projection</code><span class="sig-paren">(</span><em>vector</em>, <em>velocity_i</em>, <em>velocity_j</em><span class="sig-paren">)</span><a class="headerlink" href="#common_calc.projection" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function returns True if velocity_i and velocity_j face opposite directions considering the vector that links
+the center of particle i and particle j.
+:param vector: vector that links the center of particle i and particle j.
+:type vector: np.array
+:param velocity_i: vector of the velocity of particle i
+:type velocity_i: np.array
+:param velocity_j: vector of the velocity of particle j
+:type velocity_j: np.array
+:return: True if the two velocity vectors face opposite directions
+:rtype: bool</p>
+</dd></dl>
+
+</div>
+<div class="section" id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></li>
+<li><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></li>
+<li><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></li>
+</ul>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Romain Simon.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
