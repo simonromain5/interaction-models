@@ -1,0 +1,6 @@
+Animation
+=========
+
+.. automodule:: animate
+   :members:
+

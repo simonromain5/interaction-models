@@ -1,0 +1,358 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html4" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Brownian motion &mdash; Random Walks  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Ballistic motion with stop" href="ballistic.html" />
+    <link rel="prev" title="Models" href="models.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Random Walks
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html">Introduction</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="models.html">Models</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Brownian motion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ballistic.html">Ballistic motion with stop</a></li>
+<li class="toctree-l2"><a class="reference internal" href="active.html">Active brownian motion</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../other/other.html">Utilities</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Random Walks</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="models.html">Models</a> &raquo;</li>
+        
+      <li>Brownian motion</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../../_sources/rst/models/brownian.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-brownian">
+<span id="brownian-motion"></span><h1>Brownian motion<a class="headerlink" href="#module-brownian" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="brownian.BrownianMotion">
+<em class="property">class </em><code class="descclassname">brownian.</code><code class="descname">BrownianMotion</code><span class="sig-paren">(</span><em>dt</em>, <em>radius</em>, <em>n_particles</em>, <em>surface</em>, <em>n_steps</em><span class="sig-paren">)</span><a class="headerlink" href="#brownian.BrownianMotion" title="Permalink to this definition">¶</a></dt>
+<dd><p>This class represents the Brownian motion of particles in 2 dimensions. The motion of the particles is restricted in
+a box. We consider the particles as ghost particles: they can intermingle.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>dt</strong> (<em>float</em><em> or </em><em>int</em>) – Increment of time for each step. Constant * dt is the variance of the normal distribution that we use to calculate the increment of all the positions at each step.</li>
+<li><strong>radius</strong> (<em>float</em><em> or </em><em>int</em>) – radius of the particles. It as constant for all the particles</li>
+<li><strong>n_particles</strong> (<em>int</em>) – Number of particles in the box</li>
+<li><strong>surface</strong> (<em>float</em><em> or </em><em>int</em>) – Surface of the box. We consider the box as a square, hence the length of the side is equal to the square root of the surface.</li>
+<li><strong>n_steps</strong> (<em>int</em>) – Number of steps that we consider for the total movement of the particles.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="brownian.BrownianMotion.brown_iter_2d">
+<code class="descname">brown_iter_2d</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#brownian.BrownianMotion.brown_iter_2d" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an array of the increment of the next position of the particles (dx, dy). As we consider a Brownian
+motion, the increment follows a 2D gaussian law of mean 0 and of variance dt.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Returns an array of the increment of the next position of the particles (dx, dy). It is of shape (n_particles, 2)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">np.array</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="brownian.BrownianMotion.creation_tij">
+<code class="descname">creation_tij</code><span class="sig-paren">(</span><em>step</em><span class="sig-paren">)</span><a class="headerlink" href="#brownian.BrownianMotion.creation_tij" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function extend the tij array of all the interactions between particle i and j at time step*dt.
+This function principal role is to find the array of neighbors in a 2 * self.radius radius.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>step</strong> (<em>int</em>) – step of the iteration. It ranges from 0 to self.n_steps-1</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="brownian.BrownianMotion.get_position">
+<code class="descname">get_position</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#brownian.BrownianMotion.get_position" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the positions of all the particles.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">An array of the positions of all the particles. It is of shape (n_particles, 2)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">np.array</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="brownian.BrownianMotion.get_radius">
+<code class="descname">get_radius</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#brownian.BrownianMotion.get_radius" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the radius of all the particles.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Radius of the particles. It is the same for all the particles</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">float</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="brownian.BrownianMotion.get_side">
+<code class="descname">get_side</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#brownian.BrownianMotion.get_side" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the length of the side of the box.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Length of the side of the box</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">float</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="brownian.BrownianMotion.iter_movement">
+<code class="descname">iter_movement</code><span class="sig-paren">(</span><em>step</em>, <em>animation=False</em><span class="sig-paren">)</span><a class="headerlink" href="#brownian.BrownianMotion.iter_movement" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function updates the self.position_array at time step*dt. The function takes the position of the array
+(x, y) and adds a Brownian infinitesimal step (dx, dy). Hence the new position is (x+dx, y+dy). The borders of
+the box are also considered directly in the function. If after iteration, x+dx or y+dy is inferior to 0 then the
+position is updated to x+dx=0 or y+dy=0 respectively. If after iteration, x+dx or y+dy is superior to self.side
+then the position is updated to x+dx=self.side or y+dy=self.side respectively.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>step</strong> (<em>int</em>) – step of the iteration. It ranges from 0 to self.n_steps-1</li>
+<li><strong>animation</strong> (<em>bool</em><em>, </em><em>optional</em>) – This parameter is set to False by default. This means that the creation_tij array is stored and can be analyzed. It is set to true only when the animation is run. As the animation can run indefinitely, too much data can be stored</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="brownian.BrownianMotion.total_movement">
+<code class="descname">total_movement</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#brownian.BrownianMotion.total_movement" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function iterates all the Brownian motion throughout the n_steps and returns the tij array to be analyzed</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Returns the tij array. It represents all the interactions between particles i and j at time t</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">np.array</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="ballistic.html" class="btn btn-neutral float-right" title="Ballistic motion with stop" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="models.html" class="btn btn-neutral float-left" title="Models" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Romain Simon.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
