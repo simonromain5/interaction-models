@@ -20,7 +20,7 @@ print(sys.executable)
 
 # -- Project information -----------------------------------------------------
 
-project = 'Random Walks'
+project = 'Interaction models'
 copyright = '2021, Romain Simon'
 author = 'Romain Simon'
 

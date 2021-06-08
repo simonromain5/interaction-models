@@ -61,7 +61,7 @@ class BrownianMotion:
         :return: Returns an array of the increment of the next position of the particles (dx, dy). It is of shape (n_particles, 2)
         :rtype: np.array
         """
-        return np.sqrt(self.dt) * np.random.randn(self.n_particles, 2)
+        return np.sqrt(0.1) * np.random.randn(self.n_particles, 2)
 
     def iter_movement(self, step, animation=False):
         """This function updates the self.position_array at time step*dt. The function takes the position of the array

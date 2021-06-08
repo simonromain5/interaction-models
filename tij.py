@@ -288,3 +288,64 @@ def make_hist(quantities, title, scale='linear'):
     plt.show()
 
 
+def compare_quantities(quantities_array, label_array, title='Comparison tij data', scale='linear'):
+    fig, axs = plt.subplots(2, 2)
+    fig.suptitle(title)
+    index = [[0, 0], [0, 1], [1, 0], [1, 1]]
+    colors = 'bgrmcykw'
+    markers = '*+x><d^8p'
+
+    for i in range(4):
+        a = index[i][0]
+        b = index[i][1]
+
+        if i == 0:
+            axs[a, b].set_xlabel('Contact duration')
+            axs[a, b].set_ylabel('Distribution of contact duration')
+
+        if i == 1:
+            axs[a, b].set_xlabel('Inter-contact duration')
+            axs[a, b].set_ylabel('Distribution of inter contact duration')
+
+        if i == 2:
+            axs[a, b].set_xlabel('Number of contacts')
+            axs[a, b].set_ylabel('Distribution of number of contacts')
+
+        if i == 3:
+            axs[a, b].set_xlabel('Weight')
+            axs[a, b].set_ylabel('Weight distribution')
+
+        axs[a, b].grid()
+
+    for j, data in enumerate(quantities_array):
+        data_label = label_array[j]
+
+        for i in range(4):
+            a = index[i][0]
+            b = index[i][1]
+            data = quantities_array[j][i]
+
+            if scale == 'linear':
+                counts, bins = np.histogram(data, bins='auto', density=True)
+
+            elif scale == 'log':
+                counts, bins = np.histogram(data, bins=np.logspace(np.log10(min(data)), np.log10(max(data))), density=True)
+                axs[a, b].set_xscale('log')
+                axs[a, b].set_yscale('log')
+
+            elif scale == 'semi_log':
+                counts, bins = np.histogram(data, bins='auto')
+                axs[a, b].set_yscale('log')
+
+            bins = np.array([(elt + bins[i+1])/2 for i, elt in enumerate(bins[:-1])])
+            null_index = np.where(counts != 0)[0]
+            bins, counts = bins[null_index], counts[null_index]
+
+            if j == 0:
+                axs[a, b].plot(bins, counts, c=colors[j], label=data_label)
+
+            else:
+                axs[a, b].plot(bins, counts, c=colors[j], marker=markers[j], markersize=3, label=data_label, linestyle='None')
+            axs[a, b].legend()
+
+    plt.show()

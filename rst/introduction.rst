@@ -1,5 +1,4 @@
 Introduction
 ============
 
-In this library, we introduce several models of random walks. They are used to reproduce human movement in closed space.	   
-
+This library implements several models of human face-to-face interactions in a closed environment. The models range from the brownian motion model to some specific pedestrian models. 
