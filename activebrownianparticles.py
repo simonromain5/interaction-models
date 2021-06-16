@@ -147,11 +147,12 @@ class Vicsek:
         else:
             free_index = np.arange(0, self.n_particles, dtype=int)
 
-        mean_angle_array = self.mean_angle(free_index)
-        noise_angle_array = (np.random.rand(free_index.size) - 0.5) * self.noise
-        total_angle_array = mean_angle_array + noise_angle_array
-        self.velocities_array[free_index, 0] = self.v * np.cos(total_angle_array)
-        self.velocities_array[free_index, 1] = self.v * np.sin(total_angle_array)
+        if free_index.size > 0:
+            mean_angle_array = self.mean_angle(free_index)
+            noise_angle_array = (np.random.rand(free_index.size) - 0.5) * self.noise
+            total_angle_array = mean_angle_array + noise_angle_array
+            self.velocities_array[free_index, 0] = self.v * np.cos(total_angle_array)
+            self.velocities_array[free_index, 1] = self.v * np.sin(total_angle_array)
 
     def contact(self):
         """

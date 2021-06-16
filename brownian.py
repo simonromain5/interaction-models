@@ -20,13 +20,15 @@ class BrownianMotion:
     :type n_steps: int
     """
 
-    def __init__(self, dt, radius, n_particles, surface, n_steps):
+    def __init__(self, diff, dt, radius, n_particles, surface, n_steps, janus=False):
+        self.diff = diff
+        self.dt = dt
+        self.radius = radius
         self.n_particles = n_particles
         self.surface = surface
         self.side = np.sqrt(surface)
-        self.dt = dt
-        self.radius = radius
         self.n_steps = n_steps
+        self.janus = janus
         self.position_array = np.random.rand(self.n_particles, 2) * self.side
         self.tij = []
 
@@ -61,7 +63,7 @@ class BrownianMotion:
         :return: Returns an array of the increment of the next position of the particles (dx, dy). It is of shape (n_particles, 2)
         :rtype: np.array
         """
-        return np.sqrt(0.1) * np.random.randn(self.n_particles, 2)
+        return np.sqrt(self.diff * self.dt) * np.random.randn(self.n_particles, 2)
 
     def iter_movement(self, step, animation=False):
         """This function updates the self.position_array at time step*dt. The function takes the position of the array
@@ -103,5 +105,10 @@ class BrownianMotion:
         """
         point_tree = spatial.cKDTree(self.position_array)
         neighbors = point_tree.query_ball_point(self.position_array, 2 * self.radius)
-        new_couples = cc.find_couples(neighbors, step * self.dt)
+
+        if not janus:
+            new_couples = cc.find_couples(neighbors, step * self.dt)
+
+        else:
+            new_couples = cc.find_couples(neighbors, step * self.dt)
         self.tij.extend(new_couples)

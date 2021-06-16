@@ -1,4 +1,6 @@
 import tkinter as tk
+import common_calc as cc
+import numpy as np
 
 
 class MovementAnimation:
@@ -16,10 +18,15 @@ class MovementAnimation:
         self.side, real_side = side, self.cl.get_side()
         self.ratio = self.side / real_side
         self.radius = self.cl.get_radius() * self.ratio
+        self.janus = self.cl.get_janus()
+
+        if self.janus:
+            self.velocities_norm = self.cl.get_velocities_norm()
+
         self.window = tk.Tk()
         button = tk.Button(self.window, text="X", command=self.window.destroy)
         button.pack()
-        self.canvas = tk.Canvas(self.window, width= self.side, height=self.side, bg='white')
+        self.canvas = tk.Canvas(self.window, width=self.side, height=self.side, bg='white')
         self.canvas.pack()
         self.animation_movement()
         self.window.mainloop()
@@ -29,11 +36,63 @@ class MovementAnimation:
         This function is the one that draws at each iteration the new position of the particles.
         """
         position_array = self.cl.get_position()
-        self.canvas.delete("all")
+
+        if self.janus:
+            velocities_array = self.cl.get_velocities()
+
+        else:
+            velocities_array = self.cl.get_velocities()
+            #self.canvas.delete("all")
+
         for i, elt in enumerate(position_array):
-            x = elt[0] * self.ratio
-            y = elt[1] * self.ratio
-            self.canvas.create_oval(x - self.radius, y + self.radius, x + self.radius, y - self.radius, fill='blue')
+            x, y = elt[0] * self.ratio, elt[1] * self.ratio
+
+            if self.janus:
+                v = velocities_array[i]
+
+                if np.any(v):
+                    self.canvas.delete(str(i)+'a')
+                    v_per = np.array([-v[1], v[0]])
+                    angle = 360 - np.angle(np.complex(v_per[0], v_per[1]), deg=True)
+
+                    if angle < 0:
+                        angle += 360
+
+                    self.canvas.create_arc(x - self.radius, y + self.radius, x + self.radius, y - self.radius,
+                                           start=angle, extent=180, fill='blue', tag=str(i)+'a')
+
+                    if angle < 180:
+                        new_angle = 180 + angle
+
+                    else:
+                        new_angle = angle - 180
+
+                    self.canvas.create_arc(x - self.radius, y + self.radius, x + self.radius, y - self.radius,
+                                           start=new_angle, extent=180, fill='red', tag=str(i)+'a')
+
+            else:
+                #self.canvas.create_oval(x - self.radius, y + self.radius, x + self.radius, y - self.radius, fill='blue')
+                v = velocities_array[i]
+
+                if np.any(v):
+                    self.canvas.delete(str(i) + 'a')
+                    v_per = np.array([-v[1], v[0]])
+                    angle = 360 - np.angle(np.complex(v_per[0], v_per[1]), deg=True)
+
+                    if angle < 0:
+                        angle += 360
+
+                    self.canvas.create_arc(x - self.radius, y + self.radius, x + self.radius, y - self.radius,
+                                           start=angle, extent=180, fill='blue', tag=str(i) + 'a')
+
+                    if angle < 180:
+                        new_angle = 180 + angle
+
+                    else:
+                        new_angle = angle - 180
+
+                    self.canvas.create_arc(x - self.radius, y + self.radius, x + self.radius, y - self.radius,
+                                           start=new_angle, extent=180, fill='red', tag=str(i) + 'a')
 
         self.window.update()
         self.cl.iter_movement(1, animation=True)

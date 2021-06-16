@@ -8,6 +8,34 @@ import tkinter as tk
 from animate import MovementAnimation as Ma
 
 
+bsb = bws.BallStop(0.005, 20, 1, 100, 10000, 2000, brownian=False, janus=True)
+
+tij_array = bsb.total_movement()
+timeline_array = tij.timeline(tij_array, 20)
+quantities_ball_janus = tij.quantities_calculator(timeline_array)
+tij.compare_quantities([quantities_ball_janus], ['Ball Stop Janus'], scale='log')
+
+
+'''
+bsb = bws.BallStop(0.01, 20, 1, 100, 10000, 2000, brownian=False, janus=False)
+tij_array = bsb.total_movement()
+timeline_array = tij.timeline(tij_array, 20)
+quantities_ball = tij.quantities_calculator(timeline_array)
+'''
+'''
+data = quantities_ball_janus[0]
+data = tij.regroup_data(data)
+plt.plot(data[:, 0], data[:, 1]/sum(data[:,1]))
+
+x = []
+y = []
+for i in range(70):
+    x.append(20*(i+1))
+    y.append((3/4)**i*1/4)
+plt.plot(x, y)
+plt.show()
+'''
+"""
 '''
 Brownian model
 '''
@@ -39,7 +67,7 @@ quantities_ball_brown = tij.quantities_calculator(timeline_array)
 '''
 Vicsek model
 '''
-vi = Vicsek(1.5/200, 20, 1, 500, 10000, 2000, 1, stop=False)
+vi = Vicsek(0.05, 20, 1, 500, 10000, 2000, 1, stop=False)
 vi_tij = vi.total_movement()
 timeline_array = tij.timeline(vi_tij, 20)
 quantities_vicsek = tij.quantities_calculator(timeline_array)
@@ -168,4 +196,4 @@ quantities_array = [quantities_vicsek_stop, quantities_conf, quantities_inv, qua
 label_array = ['vicsek-stop', 'conf', 'inv', 'lh', 'hosp']
 tij.compare_quantities(quantities_array, label_array, scale='semi_log')
 
-
+"""

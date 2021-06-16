@@ -26,7 +26,7 @@ class BallStop:
     :type brownian: bool, optional
     """
 
-    def __init__(self, v, dt, radius, n_particles, surface, n_steps, brownian=False):
+    def __init__(self, v, dt, radius, n_particles, surface, n_steps, brownian=False, janus=False):
         self.v = v
         self.dt = dt
         self.radius = radius
@@ -34,6 +34,7 @@ class BallStop:
         self.side = np.sqrt(surface)
         self.n_steps = n_steps
         self.brownian = brownian
+        self.janus = janus
         self.position_array = self.initial_positions()
         self.velocities_array = np.zeros((n_particles, 2))
         self.contact_array = np.zeros(n_particles)
@@ -66,6 +67,33 @@ class BallStop:
         :rtype: float
         """
         return self.side
+
+    def get_janus(self):
+        """
+        Returns the radius of all the particles.
+
+        :return: Radius of the particles. It is the same for all the particles.`
+        :rtype: float
+        """
+        return self.janus
+
+    def get_velocities(self):
+        """
+        Returns the radius of all the particles.
+
+        :return: Radius of the particles. It is the same for all the particles.`
+        :rtype: float
+        """
+        return self.velocities_array
+
+    def get_velocities_norm(self):
+        """
+        Returns the radius of all the particles.
+
+        :return: Radius of the particles. It is the same for all the particles.`
+        :rtype: float
+        """
+        return self.v
 
     def initial_positions(self):
         """
@@ -113,9 +141,56 @@ class BallStop:
         """
         point_tree = spatial.cKDTree(self.position_array)
         neighbors = point_tree.query_ball_point(self.position_array, 2 * self.radius)
-        for i, elt in enumerate(neighbors):
-            if len(elt) > 1:
-                self.contact_array[i] = 1
+
+        if self.janus:
+            non_contact_array = []
+            new_speed_array = []
+
+            for i, elt in enumerate(neighbors):
+                condition = False
+
+                if len(elt) > 1:
+                    vi = self.velocities_array[i]
+
+                    if not np.any(vi):
+                        condition = True
+
+                    else:
+
+                        for j in elt:
+                            if i == j:
+                                continue
+
+                            vj = self.velocities_array[j]
+
+                            if np.dot(vi, vj) <= 0:
+                                condition = True
+                                break
+
+                            else:
+                                v = vj
+                                v_per = np.array([-vj[1], vj[0]])
+
+                    if condition:
+                        self.contact_array[i] = 1
+
+                    else:
+                        non_contact_array.append(i)
+                        cos = np.dot(v, vi) / self.v**2
+                        sin = np.cross(v, vi) / self.v**2
+                        new_speed_array.append(cos * v - sin * v_per)
+
+            if len(non_contact_array) > 0:
+                non_contact_array = np.array(non_contact_array, dtype=int)
+                self.velocities_array[non_contact_array] = np.array(new_speed_array)
+
+        else:
+
+            for i, elt in enumerate(neighbors):
+
+                if len(elt) > 1:
+                    self.contact_array[i] = 1
+
         contact_index = np.where(self.contact_array == 1)[0]
         return neighbors[contact_index], contact_index
 
@@ -152,7 +227,7 @@ class BallStop:
 
         if self.brownian:
             index = np.where(self.contact_array == 0)[0]
-            dangle_array = np.sqrt(np.pi / 10 * self.dt) * np.random.randn(index.size)
+            dangle_array = np.sqrt(np.pi / 1000 * self.dt) * np.random.randn(index.size)
             new_velocities_array = self.velocities_array[index]
             vx, vy = np.copy(new_velocities_array[:, 0]), np.copy(new_velocities_array[:, 1])
             new_velocities_array[:, 0] = vx * np.cos(dangle_array) - vy * np.sin(dangle_array)
@@ -196,7 +271,7 @@ class BallStop:
         contact_neighbors, contact_index = self.contact()
         self.update_velocities(contact_neighbors, contact_index)
         self.border()
-        self.position_array += self.velocities_array * self.dt
+        self.position_array = self.position_array + self.velocities_array * self.dt
         self.contact_array = np.zeros(self.n_particles)
         if not animation:
             self.creation_tij(step)
@@ -222,5 +297,12 @@ class BallStop:
         """
         point_tree = spatial.cKDTree(self.position_array)
         neighbors = point_tree.query_ball_point(self.position_array, 2 * self.radius)
-        new_couples = cc.find_couples(neighbors, step * self.dt)
+
+        if not self.janus:
+            new_couples = cc.find_couples(neighbors, step * self.dt)
+
+        else:
+            new_couples = cc.find_couples(neighbors, step * self.dt, self.velocities_array, janus=True)
+
         self.tij.extend(new_couples)
+

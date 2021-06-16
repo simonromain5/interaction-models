@@ -1,6 +1,8 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+from plotly.subplots import make_subplots
+import plotly.graph_objects as go
 
 
 def conversion(path):
@@ -125,7 +127,7 @@ def timeline(tij_array, dt):
     i_min = np.min(ij_array)
     i_max = np.max(ij_array)
     ij_array = ij_array - i_min
-    timeline_size = (i_max - i_min + 1, ) * 2
+    timeline_size = (i_max - i_min + 1,) * 2
     timeline_array = np.frompyfunc(list, 0, 1)(np.empty(timeline_size, dtype=object))
     count = counts[0]
     couples = ij_array[0:count]
@@ -133,6 +135,9 @@ def timeline(tij_array, dt):
     timeline_array = add_time(old_time, couples, timeline_array)
 
     for step, time in enumerate(time_array[1:]):
+        if time - old_time > dt:
+            timeline_array = add_time(old_time + dt, couples, timeline_array)
+            couples = []
         new_count = count + counts[step + 1]
         couples1 = ij_array[count: new_count, :]
         new_couples = new(couples, couples1)
@@ -162,21 +167,26 @@ def quantities_calculator(timeline_array, dec=1):
     number_contact_array = []
     link_weight_array = []
     for elt in timeline_array:
+
         for elt1 in elt:
+
             if len(elt1) % 2 == 1:
                 elt1.pop()
+
             if len(elt1) > 0:
                 number_contact_array.append(len(elt1) // 2)
-                contact_time = [b-a for a, b in tuple(zip(elt1, elt1[1:]))[::2]]
+                contact_time = [b - a for a, b in tuple(zip(elt1, elt1[1:]))[::2]]
                 contact_time_array.extend(contact_time)
                 link_weight_array.append(sum(contact_time))
-                inter_contact_time = [b-a for a, b in tuple(zip(elt1[1:], elt1[2:]))[::2]]
+                inter_contact_time = [b - a for a, b in tuple(zip(elt1[1:], elt1[2:]))[::2]]
                 inter_contact_time_array.extend(inter_contact_time)
+
     contact_time_array, inter_contact_time_array = np.array(contact_time_array), np.array(inter_contact_time_array)
     number_contact_array, link_weight_array = np.array(number_contact_array, dtype=int), np.array(link_weight_array)
     contact_time_array = np.around(contact_time_array, decimals=dec)
     inter_contact_time_array = np.around(inter_contact_time_array, decimals=dec)
     link_weight_array = np.around(link_weight_array, decimals=dec)
+
     return contact_time_array, inter_contact_time_array, number_contact_array, link_weight_array
 
 
@@ -197,8 +207,8 @@ def regroup_data(ar):
 
 def representation(quantities, title, scale='linear'):
     """
-    Represents 4 different quantities - contact time, inter-contact time, number of contacts and weight - in scatter
-    plots.
+    Represents 4 different quantities - contact time, inter-contact time, number of contacts and weight - in histograms.
+
     :param quantities: tuple of the 4 quantities that are represented
     :type quantities: tuple of np.arrays
     :param title: Title of the figure
@@ -206,41 +216,43 @@ def representation(quantities, title, scale='linear'):
     :param scale: Scale of the plot. Can be 'linear' (default), 'log' or 'semi-log'
     :type scale: str, optional
     """
-    fig, axs = plt.subplots(2, 2)
-    fig.suptitle(title)
-    index = [[0, 0], [0, 1], [1, 0], [1, 1]]
+    fig = make_subplots(rows=2, cols=2)
+    index = [[1, 1], [1, 2], [2, 1], [2, 2]]
+
+    if scale == 'log':
+        scale_x, scale_y = scale, scale
+
+    elif scale == 'linear':
+        scale_x, scale_y = scale, scale
+
+    else:
+        scale_x, scale_y = 'linear', 'log'
+
+    # Update xaxis properties
+    fig.update_xaxes(title_text="Contact duration", type=scale_x, row=1, col=1)
+    fig.update_xaxes(title_text="Intercontact duration", type=scale_x, row=1, col=2)
+    fig.update_xaxes(title_text="Number of contacts", type=scale_x, row=2, col=1)
+    fig.update_xaxes(title_text="weight", type=scale_x, row=2, col=2)
+
+    # Update yaxis properties
+    fig.update_yaxes(title_text="Distribution of contact duration", type=scale_y, row=1, col=1)
+    fig.update_yaxes(title_text="Distribution of intercontact duration", type=scale_y, row=1, col=2)
+    fig.update_yaxes(title_text="Distribution of number of contacts", type=scale_y, row=2, col=1)
+    fig.update_yaxes(title_text="Distribution of weight", type=scale_y, row=2, col=2)
+
     for i, data in enumerate(quantities):
         a = index[i][0]
         b = index[i][1]
-        new_data = regroup_data(data)
-        x = new_data[:, 0]
-        y = new_data[:, 1]
-        axs[a, b].scatter(x, y)
+        if scale == 'log':
+            counts, bins = np.histogram(data, bins=np.logspace(np.log10(np.min(data - 0.5)),
+                                                               np.log10(np.max(data + 0.5))), density=True)
 
-        if i == 0:
-            axs[a, b].set_xlabel('Contact duration')
-            axs[a, b].set_ylabel('Distribution of contact duration')
+        else:
+            counts, bins = np.histogram(data, bins='auto', density=True)
+        bins = 0.5 * (bins[:-1] + bins[1:])
+        fig.add_trace(go.Scatter(x=bins, y=counts, mode='markers', showlegend=False), row=a, col=b)
 
-        if i == 1:
-            axs[a, b].set_xlabel('Inter-contact duration')
-            axs[a, b].set_ylabel('Distribution of inter contact duration')
-
-        if i == 2:
-            axs[a, b].set_xlabel('Number of contacts')
-            axs[a, b].set_ylabel('Distribution of number of contacts')
-
-        if i == 3:
-            axs[a, b].set_xlabel('Weight')
-            axs[a, b].set_ylabel('Weight distribution')
-
-        if scale != 'linear':
-            if scale == 'log':
-                axs[a, b].set_xscale('log')
-                axs[a, b].set_yscale('log')
-            elif scale == 'semi_log':
-                axs[a, b].set_yscale('log')
-        axs[a, b].grid()
-    plt.show()
+    fig.show()
 
 
 def make_hist(quantities, title, scale='linear'):
@@ -254,70 +266,77 @@ def make_hist(quantities, title, scale='linear'):
     :param scale: Scale of the plot. Can be 'linear' (default), 'log' or 'semi-log'
     :type scale: str, optional
     """
-    fig, axs = plt.subplots(2, 2)
-    fig.suptitle(title)
-    index = [[0, 0], [0, 1], [1, 0], [1, 1]]
+    fig = make_subplots(rows=2, cols=2)
+    index = [[1, 1], [1, 2], [2, 1], [2, 2]]
+
+    if scale == 'log':
+        scale_x, scale_y = scale, scale
+
+    elif scale == 'linear':
+        scale_x, scale_y = scale, scale
+
+    else:
+        scale_x, scale_y = 'linear', 'log'
+
+    # Update xaxis properties
+    fig.update_xaxes(title_text="Contact duration", type=scale_x, row=1, col=1)
+    fig.update_xaxes(title_text="Intercontact duration", type=scale_x, row=1, col=2)
+    fig.update_xaxes(title_text="Number of contacts", type=scale_x, row=2, col=1)
+    fig.update_xaxes(title_text="weight", type=scale_x, row=2, col=2)
+
+    # Update yaxis properties
+    fig.update_yaxes(title_text="Distribution of contact duration", type=scale_y, row=1, col=1)
+    fig.update_yaxes(title_text="Distribution of intercontact duration", type=scale_y, row=1, col=2)
+    fig.update_yaxes(title_text="Distribution of number of contacts", type=scale_y, row=2, col=1)
+    fig.update_yaxes(title_text="Distribution of weight", type=scale_y, row=2, col=2)
+
     for i, data in enumerate(quantities):
         a = index[i][0]
         b = index[i][1]
+        if scale == 'log':
+            counts, bins = np.histogram(data, bins=np.logspace(np.log10(min(data - 0.5)), np.log10(max(data + 0.5))),
+                                        density=True)
 
-        if i == 0:
-            axs[a, b].set_xlabel('Contact duration')
-            axs[a, b].set_ylabel('Distribution of contact duration')
+        else:
+            counts, bins = np.histogram(data, bins='auto', density=True)
+        bins = 0.5 * (bins[:-1] + bins[1:])
+        fig.add_trace(go.Histogram(x=bins, y=counts, showlegend=False), row=a, col=b)
 
-        if i == 1:
-            axs[a, b].set_xlabel('Inter-contact duration')
-            axs[a, b].set_ylabel('Distribution of inter contact duration')
-
-        if i == 2:
-            axs[a, b].set_xlabel('Number of contacts')
-            axs[a, b].set_ylabel('Distribution of number of contacts')
-
-        if i == 3:
-            axs[a, b].set_xlabel('Weight')
-            axs[a, b].set_ylabel('Weight distribution')
-
-        if scale == 'linear':
-            axs[a, b].hist(data, bins='auto')
-        elif scale == 'log':
-            axs[a, b].hist(data, bins=np.logspace(np.log10(min(data)), np.log10(max(data))), log=True, density=True)
-            axs[a, b].set_xscale('log')
-        elif scale == 'semi_log':
-            axs[a, b].hist(data, bins='auto', log=True)
-        axs[a, b].grid()
-    plt.show()
+    fig.show()
 
 
 def compare_quantities(quantities_array, label_array, title='Comparison tij data', scale='linear'):
-    fig, axs = plt.subplots(2, 2)
-    fig.suptitle(title)
-    index = [[0, 0], [0, 1], [1, 0], [1, 1]]
-    colors = 'bgrmcykw'
-    markers = '*+x><d^8p'
+    fig = make_subplots(rows=2, cols=2)
+    index = [[1, 1], [1, 2], [2, 1], [2, 2]]
+    colors = ['rgb(31, 119, 180)', 'rgb(255, 127, 14)',
+              'rgb(44, 160, 44)', 'rgb(214, 39, 40)',
+              'rgb(148, 103, 189)', 'rgb(140, 86, 75)',
+              'rgb(227, 119, 194)', 'rgb(127, 127, 127)',
+              'rgb(188, 189, 34)', 'rgb(23, 190, 207)']
+    markers = ['star-triangle-up', 'circle', 'x', 'diamond']
 
-    for i in range(4):
-        a = index[i][0]
-        b = index[i][1]
+    if scale == 'log':
+        scale_x, scale_y = scale, scale
 
-        if i == 0:
-            axs[a, b].set_xlabel('Contact duration')
-            axs[a, b].set_ylabel('Distribution of contact duration')
+    elif scale == 'linear':
+        scale_x, scale_y = scale, scale
 
-        if i == 1:
-            axs[a, b].set_xlabel('Inter-contact duration')
-            axs[a, b].set_ylabel('Distribution of inter contact duration')
+    else:
+        scale_x, scale_y = 'linear', 'log'
 
-        if i == 2:
-            axs[a, b].set_xlabel('Number of contacts')
-            axs[a, b].set_ylabel('Distribution of number of contacts')
+    # Update xaxis properties
+    fig.update_xaxes(title_text="Contact duration", type=scale_x, row=1, col=1)
+    fig.update_xaxes(title_text="Intercontact duration", type=scale_x, row=1, col=2)
+    fig.update_xaxes(title_text="Number of contacts", type=scale_x, row=2, col=1)
+    fig.update_xaxes(title_text="weight", type=scale_x, row=2, col=2)
 
-        if i == 3:
-            axs[a, b].set_xlabel('Weight')
-            axs[a, b].set_ylabel('Weight distribution')
+    # Update yaxis properties
+    fig.update_yaxes(title_text="Distribution of contact duration", type=scale_y, row=1, col=1)
+    fig.update_yaxes(title_text="Distribution of intercontact duration", type=scale_y, row=1, col=2)
+    fig.update_yaxes(title_text="Distribution of number of contacts", type=scale_y, row=2, col=1)
+    fig.update_yaxes(title_text="Distribution of weight", type=scale_y, row=2, col=2)
 
-        axs[a, b].grid()
-
-    for j, data in enumerate(quantities_array):
+    for j, data in reversed(list(enumerate(quantities_array))):
         data_label = label_array[j]
 
         for i in range(4):
@@ -325,27 +344,33 @@ def compare_quantities(quantities_array, label_array, title='Comparison tij data
             b = index[i][1]
             data = quantities_array[j][i]
 
-            if scale == 'linear':
-                counts, bins = np.histogram(data, bins='auto', density=True)
-
-            elif scale == 'log':
-                counts, bins = np.histogram(data, bins=np.logspace(np.log10(min(data)), np.log10(max(data))), density=True)
-                axs[a, b].set_xscale('log')
-                axs[a, b].set_yscale('log')
-
-            elif scale == 'semi_log':
-                counts, bins = np.histogram(data, bins='auto')
-                axs[a, b].set_yscale('log')
-
-            bins = np.array([(elt + bins[i+1])/2 for i, elt in enumerate(bins[:-1])])
-            null_index = np.where(counts != 0)[0]
-            bins, counts = bins[null_index], counts[null_index]
-
-            if j == 0:
-                axs[a, b].plot(bins, counts, c=colors[j], label=data_label)
+            if scale == 'log':
+                counts, bins = np.histogram(data, bins=np.logspace(np.log10(np.min(data - 0.5)),
+                                                                   np.log10(np.max(data + 0.5))), density=True)
 
             else:
-                axs[a, b].plot(bins, counts, c=colors[j], marker=markers[j], markersize=3, label=data_label, linestyle='None')
-            axs[a, b].legend()
+                counts, bins = np.histogram(data, bins='auto', density=True)
 
-    plt.show()
+            bins = np.array([(elt + bins[i + 1]) / 2 for i, elt in enumerate(bins[:-1])])
+            non_null_index = np.where(counts != 0)[0]
+            bins, counts = bins[non_null_index], counts[non_null_index]
+
+            if j == 0:
+                if i == 0:
+                    fig.add_trace(
+                        go.Scatter(x=bins, y=counts, mode='lines', marker={'color': colors[j]}, fillcolor=colors[j],
+                                   name=data_label), row=a, col=b)
+                else:
+                    fig.add_trace(
+                        go.Scatter(x=bins, y=counts, mode='lines', marker={'color': colors[j]}, fillcolor=colors[j],
+                                   name=data_label, showlegend=False), row=a, col=b)
+
+            else:
+                if i == 0:
+                    fig.add_trace(go.Scatter(x=bins, y=counts, marker={'color': colors[j], 'symbol': markers[j - 1]},
+                                             name=data_label, mode='markers'), row=a, col=b)
+                else:
+                    fig.add_trace(go.Scatter(x=bins, y=counts, marker={'color': colors[j], 'symbol': markers[j - 1]},
+                                             name=data_label, mode='markers', showlegend=False), row=a, col=b)
+
+    fig.show()
