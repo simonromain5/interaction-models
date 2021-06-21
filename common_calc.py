@@ -13,36 +13,37 @@ def find_couples(neighbors, t, velocites=None, janus=False):
     :type t: float or int
     """
     new_couples = []
-    for i, elt in enumerate(neighbors):
-        if len(elt) > 1:
 
-            if janus:
-                new_couples_i = [(t, i, j) for j in elt if (j > i and np.dot(velocites[i], velocites[j]) < 0)]
+    if janus:
+        new_couples_i = [(t, i, j) for j in elt if (j > i and np.dot(velocites[i], velocites[j]) <= 0)]
 
-            else:
-                new_couples_i = [(t, i, j) for j in elt if j > i]
-
-            new_couples.extend(new_couples_i)
+    else:
+        new_couples_i = 0
 
     return new_couples
 
 
-def projection(vector, velocity_i, velocity_j):
+def projection(centers_array, velocity_i, velocity_j):
     """
     This function returns True if velocity_i and velocity_j face opposite directions considering the vector that links
     the center of particle i and particle j.
-    :param vector: vector that links the center of particle i and particle j.
-    :type vector: np.array
+    :param centers_array: all the vectors that link the centers of particle i and particle j.
+    :type centers_array: np.array
     :param velocity_i: vector of the velocity of particle i
     :type velocity_i: np.array
-    :param velocity_j: vector of the velocity of particle j
+    :param velocity_j: array of vectors of the velocity of particle j (neighbors of i)
     :type velocity_j: np.array
     :return: True if the two velocity vectors face opposite directions
     :rtype: bool
     """
-    a = np.dot(vector, velocity_i)
-    b = np.dot(vector, velocity_j)
-    return a < 0 < b
+    a = np.dot(velocity_i, centers_array.transpose())
+    inv_out = any(a >= 0)
+
+    if not inv_out:
+        b = np.einsum('ij,ij->i', centers_array, velocity_j)
+        inv_out = any(b < 0)
+
+    return not inv_out
 
 
 def cost_function(v, cl):
@@ -87,4 +88,10 @@ def angle_between(v1, v2):
     return np.arccos(np.clip(np.dot(v1_u, v2_u), -1.0, 1.0))
 
 
+def get_index_sup1(neighbors):
 
+    def len_elt_sup1(elt):
+        return len(elt) > 1
+
+    truth_array = np.vectorize(len_elt_sup1)(neighbors)
+    return np.where(truth_array)[0]

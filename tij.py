@@ -135,17 +135,22 @@ def timeline(tij_array, dt):
     timeline_array = add_time(old_time, couples, timeline_array)
 
     for step, time in enumerate(time_array[1:]):
+
         if time - old_time > dt:
             timeline_array = add_time(old_time + dt, couples, timeline_array)
             couples = []
+
         new_count = count + counts[step + 1]
         couples1 = ij_array[count: new_count, :]
         new_couples = new(couples, couples1)
         lost_couples = lost(couples, couples1)
+
         if new_couples.size > 0:
             timeline_array = add_time(time, new_couples, timeline_array)
+
         if lost_couples.size > 0:
             timeline_array = add_time(old_time + dt, lost_couples, timeline_array)
+
         couples = couples1
         count = new_count
         old_time = time

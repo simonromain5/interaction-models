@@ -1,20 +1,25 @@
+import numpy as np
 from brownian import BrownianMotion
 from activebrownianparticles import Vicsek
 import tij
 import ballisticwithstop as bws
-import numpy as np
 import matplotlib.pyplot as plt
 import tkinter as tk
 from animate import MovementAnimation as Ma
 
+bsb = bws.BallStop(0.005, 200)
+tij_array = bsb.total_movement()
+timeline_array = tij.timeline(tij_array, 20)
+quantities_ball_janus = tij.quantities_calculator(timeline_array)
+tij.compare_quantities([quantities_ball_janus], ['Ball Stop Janus'], scale='linear')
 
-bsb = bws.BallStop(0.005, 20, 1, 100, 10000, 2000, brownian=False, janus=True)
-
+'''
+bsb = bws.BallStop(0.005, 20, 1, 500, 10000, 2000)
 tij_array = bsb.total_movement()
 timeline_array = tij.timeline(tij_array, 20)
 quantities_ball_janus = tij.quantities_calculator(timeline_array)
 tij.compare_quantities([quantities_ball_janus], ['Ball Stop Janus'], scale='log')
-
+'''
 
 '''
 bsb = bws.BallStop(0.01, 20, 1, 100, 10000, 2000, brownian=False, janus=False)

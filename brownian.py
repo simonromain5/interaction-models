@@ -1,9 +1,8 @@
 import numpy as np
-import scipy.spatial as spatial
-import common_calc as cc
+import basemodel as bm
 
 
-class BrownianMotion:
+class BrownianMotion(bm.AbstractTotalModel):
     """
     This class represents the Brownian motion of particles in 2 dimensions. The motion of the particles is restricted in
     a box. We consider the particles as ghost particles: they can intermingle.
@@ -20,41 +19,10 @@ class BrownianMotion:
     :type n_steps: int
     """
 
-    def __init__(self, diff, dt, radius, n_particles, surface, n_steps, janus=False):
+    def __init__(self, diff, n_particles, dt=20, radius=1, surface=10000, n_steps=2000, janus=False):
         self.diff = diff
-        self.dt = dt
-        self.radius = radius
-        self.n_particles = n_particles
-        self.surface = surface
-        self.side = np.sqrt(surface)
-        self.n_steps = n_steps
-        self.janus = janus
+        super().__init__(n_particles, dt, radius,  surface, n_steps, janus)
         self.position_array = np.random.rand(self.n_particles, 2) * self.side
-        self.tij = []
-
-    def get_position(self):
-        """Returns the positions of all the particles.
-
-        :return: An array of the positions of all the particles. It is of shape (n_particles, 2)
-        :rtype: np.array
-        """
-        return self.position_array
-
-    def get_radius(self):
-        """Returns the radius of all the particles.
-
-        :return: Radius of the particles. It is the same for all the particles
-        :rtype: float
-        """
-        return self.radius
-
-    def get_side(self):
-        """Returns the length of the side of the box.
-
-        :return: Length of the side of the box
-        :rtype: float
-        """
-        return self.side
 
     def brown_iter_2d(self):
         """Returns an array of the increment of the next position of the particles (dx, dy). As we consider a Brownian
@@ -81,34 +49,6 @@ class BrownianMotion:
         new_position = np.where(new_position - self.radius <= 0, self.radius, new_position)
         new_position = np.where(new_position + self.radius >= self.side, self.side - self.radius, new_position)
         self.position_array = new_position
+
         if not animation:
             self.creation_tij(step)
-
-    def total_movement(self):
-        """
-        This function iterates all the Brownian motion throughout the n_steps and returns the tij array to be analyzed
-
-        :return: Returns the tij array. It represents all the interactions between particles i and j at time t
-        :rtype: np.array
-        """
-        for step in range(self.n_steps):
-            self.iter_movement(step)
-        return np.array(self.tij)
-
-    def creation_tij(self, step):
-        """
-        This function extend the tij array of all the interactions between particle i and j at time step*dt.
-        This function principal role is to find the array of neighbors in a 2 * self.radius radius.
-
-        :param step: step of the iteration. It ranges from 0 to self.n_steps-1
-        :type step: int
-        """
-        point_tree = spatial.cKDTree(self.position_array)
-        neighbors = point_tree.query_ball_point(self.position_array, 2 * self.radius)
-
-        if not janus:
-            new_couples = cc.find_couples(neighbors, step * self.dt)
-
-        else:
-            new_couples = cc.find_couples(neighbors, step * self.dt)
-        self.tij.extend(new_couples)

@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/Brownian_motion.iml" filepath="$PROJECT_DIR$/.idea/Brownian_motion.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/Interaction_models.iml" filepath="$PROJECT_DIR$/.idea/Interaction_models.iml" />
     </modules>
   </component>
 </project>
