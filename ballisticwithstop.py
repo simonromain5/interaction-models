@@ -47,28 +47,17 @@ class BallStop(bm.AbstractBwsAbpModel):
 
         """
         self.random_velocities(contact_index)
-        velocity_null = []
-        
-        for elt in contact_pairs:
-            i = elt[0]
-            j = elt[1]
-            position_i = self.position_array[i]
-            velocity_i = self.velocities_array[i]
-            neighbors_i_position = [self.position_array[j]]
-            neighbors_i_velocity = [self.velocities_array[j]]
-            centers_array = neighbors_i_position - position_i
-
-            if not cc.projection(centers_array, velocity_i, neighbors_i_velocity):
-
-                if i not in velocity_null:
-                    velocity_null.append(i)
-                if j not in velocity_null:
-                    velocity_null.append(j)
-
-            #else:
-            #    self.possible_contact[i] = step
-
-        self.velocities_array[velocity_null] = 0
+        i_index_array, j_index_array = contact_pairs[:, 0], contact_pairs[:, 1]
+        velocity_i_array, velocity_j_array = self.velocities_array[i_index_array], self.velocities_array[j_index_array]
+        position_i_array, position_j_array = self.position_array[i_index_array], self.position_array[j_index_array]
+        centers_array = position_j_array - position_i_array
+        distance_array = np.linalg.norm(centers_array, axis=-1).reshape(-1, 1)
+        self.position_array[i_index_array] = position_i_array - (
+                    2 * self.radius - distance_array) * centers_array / distance_array
+        truth_array = cc.projection(centers_array, velocity_i_array, velocity_j_array)
+        velocity_pairs_null = np.where(np.logical_not(truth_array))[0]
+        velocity_null_index = contact_pairs[velocity_pairs_null].ravel()
+        self.velocities_array[velocity_null_index] = 0
 
         if self.brownian:
             index = np.where(self.contact_array == 0)[0]
@@ -90,7 +79,8 @@ class BallStop(bm.AbstractBwsAbpModel):
         :type animation: bool, optional
         """
         contact_pairs, contact_index = self.contact(step)
-        self.update_velocities(contact_pairs, contact_index, step)
+        if contact_index.size > 0:
+            self.update_velocities(contact_pairs, contact_index, step)
         self.border()
         self.position_array = self.position_array + self.velocities_array * self.dt
         self.contact_array = np.zeros(self.n_particles)

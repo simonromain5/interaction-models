@@ -23,27 +23,22 @@ def find_couples(neighbors, t, velocites=None, janus=False):
     return new_couples
 
 
-def projection(centers_array, velocity_i, velocity_j):
+def projection(centers_array, velocity_i_array, velocity_j_array):
     """
     This function returns True if velocity_i and velocity_j face opposite directions considering the vector that links
     the center of particle i and particle j.
     :param centers_array: all the vectors that link the centers of particle i and particle j.
     :type centers_array: np.array
-    :param velocity_i: vector of the velocity of particle i
-    :type velocity_i: np.array
-    :param velocity_j: array of vectors of the velocity of particle j (neighbors of i)
-    :type velocity_j: np.array
+    :param velocity_i_array: vector of the velocity of particle i
+    :type velocity_i_array: np.array
+    :param velocity_j_array: array of vectors of the velocity of particle j (neighbors of i)
+    :type velocity_j_array: np.array
     :return: True if the two velocity vectors face opposite directions
     :rtype: bool
     """
-    a = np.dot(velocity_i, centers_array.transpose())
-    inv_out = any(a >= 0)
-
-    if not inv_out:
-        b = np.einsum('ij,ij->i', centers_array, velocity_j)
-        inv_out = any(b < 0)
-
-    return not inv_out
+    a = np.einsum('ij,ij->i', centers_array, velocity_i_array)
+    b = np.einsum('ij,ij->i', centers_array, velocity_j_array)
+    return np.logical_and(a <= 0, b >= 0)
 
 
 def cost_function(v, cl):

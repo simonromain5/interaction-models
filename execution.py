@@ -1,17 +1,22 @@
 import numpy as np
 from brownian import BrownianMotion
 from activebrownianparticles import Vicsek
+from pedestrianmodel import Pedestrian
 import tij
 import ballisticwithstop as bws
 import matplotlib.pyplot as plt
 import tkinter as tk
 from animate import MovementAnimation as Ma
 
-bsb = bws.BallStop(0.005, 200)
+#a = Pedestrian(0.005, 500)
+#tij_array = a.total_movement()
+
+bsb = bws.BallStop(0.005, 100, brownian=False)
+Ma(bsb, 1000)
 tij_array = bsb.total_movement()
 timeline_array = tij.timeline(tij_array, 20)
 quantities_ball_janus = tij.quantities_calculator(timeline_array)
-tij.compare_quantities([quantities_ball_janus], ['Ball Stop Janus'], scale='linear')
+tij.compare_quantities([quantities_ball_janus], ['Ball Stop Janus'], scale='log')
 
 '''
 bsb = bws.BallStop(0.005, 20, 1, 500, 10000, 2000)

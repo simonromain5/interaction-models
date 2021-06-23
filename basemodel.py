@@ -86,10 +86,6 @@ class AbstractBwsAbpModel(AbstractTotalModel):
         self.velocities_array = np.zeros((self.n_particles, 2))
         self.random_velocities(np.arange(0, n_particles, dtype=int))
 
-        if self.stop:
-            self.contact_array = np.zeros(n_particles)
-            self.possible_contact = -np.ones(n_particles, dtype=int)
-
     def get_velocities(self):
         """
         Returns the radius of all the particles.
@@ -158,17 +154,9 @@ class AbstractBwsAbpModel(AbstractTotalModel):
         :rtype: tuple of np.arrays.
         """
         point_tree = spatial.cKDTree(self.position_array)
-        contact_pairs = point_tree.query_pairs(2 * self.radius, output_type='ndarray')
+        eps = 10 ** (-3)
+        contact_pairs = point_tree.query_pairs(2 * self.radius + eps, output_type='ndarray')
         contact_index = np.unique(contact_pairs)
-
-        for i in contact_index:
-
-            if self.possible_contact[i] != step-1:
-                self.contact_array[i] = 1
-
-            else:
-                self.possible_contact[i] = -1
-
         return contact_pairs, contact_index
 
     def border(self):
