@@ -23,6 +23,10 @@ class BrownianMotion(bm.AbstractTotalModel):
         self.diff = diff
         super().__init__(n_particles, dt, radius,  surface, n_steps, janus)
         self.position_array = np.random.rand(self.n_particles, 2) * self.side
+        self.velocities_array = self.position_array
+
+    def get_velocities(self):
+        return self.velocities_array
 
     def brown_iter_2d(self):
         """Returns an array of the increment of the next position of the particles (dx, dy). As we consider a Brownian
@@ -48,7 +52,9 @@ class BrownianMotion(bm.AbstractTotalModel):
         new_position = self.position_array + self.brown_iter_2d()
         new_position = np.where(new_position - self.radius <= 0, self.radius, new_position)
         new_position = np.where(new_position + self.radius >= self.side, self.side - self.radius, new_position)
+        self.velocities_array = (new_position - self.position_array) / self.dt
         self.position_array = new_position
 
         if not animation:
-            self.creation_tij(step)
+            contact_pairs, contact_index = self.contact(step)
+            self.creation_tij(step, contact_pairs)

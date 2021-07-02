@@ -49,32 +49,18 @@ class Vicsek(bm.AbstractBwsAbpModel):
             mean_angle_array[i] = np.arctan2(mean_v[1], mean_v[0])
         return mean_angle_array
 
-    def update_velocities(self,  contact_neighbors=None, contact_index=None):
+    def update_velocities(self,  contact_pairs=None, contact_index=None):
         """
         This function updates the velocities of each particle considering the definition of the Vicsek model. Each
         particle changes its angle to align itself with is neighbors, hence the velocities vectors are updated at each
         step.
         """
         if self.stop:
-            self.random_velocities(contact_index)
-            velocity_null = []
-            for i, elt in enumerate(contact_neighbors):
-                real_i = contact_index[i]
-                elt.remove(real_i)
-                position_i = self.position_array[real_i]
-                velocity_i = self.velocities_array[real_i]
-                neighbors_i = np.array(elt, dtype=int)
-                neighbors_i_position = self.position_array[neighbors_i]
-                neighbors_i_velocity = self.velocities_array[neighbors_i]
-                centers_array = neighbors_i_position - position_i
-                if not cc.projection(centers_array, velocity_i, neighbors_i_velocity):
-                    velocity_null.append(real_i)
-
-            self.velocities_array[velocity_null] = 0
-            free_index = np.where(self.contact_array == 0)[0]
+            self.update_velocities_stop(contact_pairs, contact_index)
+            free_index = np.delete(np.arange(self.n_particles), contact_index)
 
         else:
-            free_index = np.arange(0, self.n_particles, dtype=int)
+            free_index = np.arange(self.n_particles, dtype=int)
 
         if free_index.size > 0:
             mean_angle_array = self.mean_angle(free_index)
@@ -82,29 +68,3 @@ class Vicsek(bm.AbstractBwsAbpModel):
             total_angle_array = mean_angle_array + noise_angle_array
             self.velocities_array[free_index, 0] = self.v * np.cos(total_angle_array)
             self.velocities_array[free_index, 1] = self.v * np.sin(total_angle_array)
-
-    def iter_movement(self, step, animation=False):
-        """This function updates the self.position_array at time step*dt. The function takes the position of the array
-        (x, y) and adds a ballistic infinitesimal step (dx, dy). Hence the new position is (x+dx, y+dy). The borders of
-        the box are also considered with the self.border() function.
-
-        :param step: step of the iteration. It ranges from 0 to self.n_steps-1
-        :type step: int
-        :param animation: This parameter is set to False by default. This means that the creation_tij array is stored and can be analyzed. It is set to true only when the animation is run. As the animation can run indefinitely, too much data can be stored
-        :type animation: bool, optional
-        """
-        if self.stop:
-            c_neighbors, c_index = self.contact(step)
-            self.update_velocities(contact_neighbors=c_neighbors, contact_index=c_index)
-
-        else:
-            self.update_velocities()
-
-        self.border()
-        self.position_array += self.velocities_array * self.dt
-
-        if self.stop:
-            self.contact_array = np.zeros(self.n_particles)
-
-        if not animation:
-            self.creation_tij(step)

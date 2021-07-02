@@ -20,10 +20,6 @@ class MovementAnimation:
         self.radius = self.cl.get_radius() * self.ratio
         self.janus = self.cl.get_janus()
         self.step = 0
-
-        if self.janus:
-            self.velocities_norm = self.cl.get_velocities_norm()
-
         self.window = tk.Tk()
         button = tk.Button(self.window, text="X", command=self.window.destroy)
         button.pack()

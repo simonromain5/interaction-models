@@ -2,27 +2,6 @@ import numpy as np
 import tij
 
 
-def find_couples(neighbors, t, velocites=None, janus=False):
-    """
-    This function finds all the couples at time t. The couples are all particles i and j that are neighbors at
-    a particular time.
-
-    :param neighbors: Array of all the neighbors of particle i
-    :type neighbors: np.array of lists
-    :param t: time of the iteration. It is equal to step * dt.
-    :type t: float or int
-    """
-    new_couples = []
-
-    if janus:
-        new_couples_i = [(t, i, j) for j in elt if (j > i and np.dot(velocites[i], velocites[j]) <= 0)]
-
-    else:
-        new_couples_i = 0
-
-    return new_couples
-
-
 def projection(centers_array, velocity_i_array, velocity_j_array):
     """
     This function returns True if velocity_i and velocity_j face opposite directions considering the vector that links
@@ -81,12 +60,3 @@ def angle_between(v1, v2):
     v1_u = unit_vector(v1)
     v2_u = unit_vector(v2)
     return np.arccos(np.clip(np.dot(v1_u, v2_u), -1.0, 1.0))
-
-
-def get_index_sup1(neighbors):
-
-    def len_elt_sup1(elt):
-        return len(elt) > 1
-
-    truth_array = np.vectorize(len_elt_sup1)(neighbors)
-    return np.where(truth_array)[0]

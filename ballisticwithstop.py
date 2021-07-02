@@ -31,7 +31,7 @@ class BallStop(bm.AbstractBwsAbpModel):
         self.brownian = brownian
         super().__init__(v, n_particles, dt, radius, surface, n_steps, janus, True)
 
-    def update_velocities(self, contact_pairs, contact_index, step):
+    def update_velocities(self, contact_pairs, contact_index):
         """
         This function updates the velocities of all the particles. For all the particles that are not in contact with
         another particle, then their velocities are not updated, unless self.brownian is set to True (The particles will
@@ -46,46 +46,15 @@ class BallStop(bm.AbstractBwsAbpModel):
         :type contact_index: np.array
 
         """
-        self.random_velocities(contact_index)
-        i_index_array, j_index_array = contact_pairs[:, 0], contact_pairs[:, 1]
-        velocity_i_array, velocity_j_array = self.velocities_array[i_index_array], self.velocities_array[j_index_array]
-        position_i_array, position_j_array = self.position_array[i_index_array], self.position_array[j_index_array]
-        centers_array = position_j_array - position_i_array
-        distance_array = np.linalg.norm(centers_array, axis=-1).reshape(-1, 1)
-        self.position_array[i_index_array] = position_i_array - (
-                    2 * self.radius - distance_array) * centers_array / distance_array
-        truth_array = cc.projection(centers_array, velocity_i_array, velocity_j_array)
-        velocity_pairs_null = np.where(np.logical_not(truth_array))[0]
-        velocity_null_index = contact_pairs[velocity_pairs_null].ravel()
-        self.velocities_array[velocity_null_index] = 0
+        self.update_velocities_stop(contact_pairs, contact_index)
 
         if self.brownian:
-            index = np.where(self.contact_array == 0)[0]
+            index = np.delete(np.arange(self.n_particles), contact_index)
             dangle_array = np.sqrt(np.pi / 1000 * self.dt) * np.random.randn(index.size)
             new_velocities_array = self.velocities_array[index]
             vx, vy = np.copy(new_velocities_array[:, 0]), np.copy(new_velocities_array[:, 1])
             new_velocities_array[:, 0] = vx * np.cos(dangle_array) - vy * np.sin(dangle_array)
             new_velocities_array[:, 1] = vy * np.cos(dangle_array) + vx * np.sin(dangle_array)
             self.velocities_array[index] = new_velocities_array
-
-    def iter_movement(self, step, animation=False):
-        """This function updates the self.position_array at time step*dt. The function takes the position of the array
-        (x, y) and adds a ballistic infinitesimal step (dx, dy). Hence the new position is (x+dx, y+dy). The borders of
-        the box are also considered with the self.border() function.
-
-        :param step: step of the iteration. It ranges from 0 to self.n_steps-1
-        :type step: int
-        :param animation: This parameter is set to False by default. This means that the creation_tij array is stored and can be analyzed. It is set to true only when the animation is run. As the animation can run indefinitely, too much data can be stored
-        :type animation: bool, optional
-        """
-        contact_pairs, contact_index = self.contact(step)
-        if contact_index.size > 0:
-            self.update_velocities(contact_pairs, contact_index, step)
-        self.border()
-        self.position_array = self.position_array + self.velocities_array * self.dt
-        self.contact_array = np.zeros(self.n_particles)
-
-        if not animation:
-            self.creation_tij(step, contact_pairs)
 
 

@@ -50,6 +50,20 @@ class AbstractTotalModel:
         """
         return self.janus
 
+    def contact(self):
+        """
+        This function determines if one particle is in contact with other particles in the system.
+
+        :return: A tuple of length 2. First, the neighbors array for each particle in contact and second, the respective
+         index of each element in the main self.position_array.
+        :rtype: tuple of np.arrays.
+        """
+        point_tree = spatial.cKDTree(self.position_array)
+        eps = 10 ** (-3)
+        contact_pairs = point_tree.query_pairs(2 * self.radius + eps, output_type='ndarray')
+        contact_index = np.unique(contact_pairs)
+        return contact_pairs, contact_index
+
     def total_movement(self):
         """
         This function iterates all the Brownian motion throughout the n_steps and returns the tij array to be analyzed
@@ -70,10 +84,17 @@ class AbstractTotalModel:
         :param step: step of the iteration. It ranges from 0 to self.n_steps-1
         :type step: int
         """
+        if self.janus:
+            contact_i_array = pairs[:, 0]
+            contact_j_array = pairs[:, 1]
+            velocity_i_array, velocity_j_array = self.velocities_array[contact_i_array], \
+                self.velocities_array[contact_j_array]
+            truth_array = np.einsum('ij,ij->i', velocity_j_array, velocity_i_array) <= 0
+            truth_index = np.where(truth_array)
+            pairs = pairs[truth_index]
+
         time_pairs = np.append(step * self.dt * np.ones((pairs.shape[0], 1)), pairs, axis=1)
         self.tij = np.append(self.tij, time_pairs, axis=0)
-
-        #Add if janus
 
 
 class AbstractBwsAbpModel(AbstractTotalModel):
@@ -145,20 +166,6 @@ class AbstractBwsAbpModel(AbstractTotalModel):
         alg = np.random.choice([-1, 1], index.size)
         self.velocities_array[index, 1] = alg * np.sqrt(self.v ** 2 - self.velocities_array[index, 0] ** 2)
 
-    def contact(self, step):
-        """
-        This function determines if one particle is in contact with other particles in the system.
-
-        :return: A tuple of length 2. First, the neighbors array for each particle in contact and second, the respective
-         index of each element in the main self.position_array.
-        :rtype: tuple of np.arrays.
-        """
-        point_tree = spatial.cKDTree(self.position_array)
-        eps = 10 ** (-3)
-        contact_pairs = point_tree.query_pairs(2 * self.radius + eps, output_type='ndarray')
-        contact_index = np.unique(contact_pairs)
-        return contact_pairs, contact_index
-
     def border(self):
         """
         This function sets to 0 the velocity of a particle that goes out of the box. The particle doesn't move out of
@@ -186,3 +193,43 @@ class AbstractBwsAbpModel(AbstractTotalModel):
             self.velocities_array[index_max, column_max] = 0
             self.velocities_array[index_max, 1-column_max] = alg * self.v
 
+    def update_velocities_stop(self, contact_pairs, contact_index):
+        self.random_velocities(contact_index)
+        i_index_array, j_index_array = contact_pairs[:, 0], contact_pairs[:, 1]
+        velocity_i_array, velocity_j_array = self.velocities_array[i_index_array], self.velocities_array[
+            j_index_array]
+        position_i_array, position_j_array = self.position_array[i_index_array], self.position_array[j_index_array]
+        centers_array = position_j_array - position_i_array
+        distance_array = np.linalg.norm(centers_array, axis=-1).reshape(-1, 1)
+        self.position_array[i_index_array] = position_i_array - (
+                2 * self.radius - distance_array) * centers_array / distance_array
+        truth_array = cc.projection(centers_array, velocity_i_array, velocity_j_array)
+        velocity_pairs_null = np.where(np.logical_not(truth_array))[0]
+        velocity_null_index = contact_pairs[velocity_pairs_null].ravel()
+        self.velocities_array[velocity_null_index] = 0
+
+    def iter_movement(self, step, animation=False):
+        """This function updates the self.position_array at time step*dt. The function takes the position of the array
+        (x, y) and adds a ballistic infinitesimal step (dx, dy). Hence the new position is (x+dx, y+dy). The borders of
+        the box are also considered with the self.border() function.
+
+        :param step: step of the iteration. It ranges from 0 to self.n_steps-1
+        :type step: int
+        :param animation: This parameter is set to False by default. This means that the creation_tij array is stored and can be analyzed. It is set to true only when the animation is run. As the animation can run indefinitely, too much data can be stored
+        :type animation: bool, optional
+        """
+        contact_pairs, contact_index = self.contact()
+
+        if self.stop:
+
+            if contact_index.size > 0:
+                self.update_velocities(contact_pairs, contact_index)
+
+        else:
+            self.update_velocities(None, None)
+
+        self.border()
+        self.position_array = self.position_array + self.velocities_array * self.dt
+
+        if not animation:
+            self.creation_tij(step, contact_pairs)
