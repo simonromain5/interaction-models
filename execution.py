@@ -9,10 +9,11 @@ import tkinter as tk
 from animate import MovementAnimation as Ma
 
 
-bsb = Pedestrian(0.005, 2, janus=False)
+bsb = Pedestrian(0.005, 10)
 Ma(bsb, 1000)
+bsb.total_movement()
 '''
-Ma(bsb, 1000)
+
 tij_array = bsb.total_movement()
 timeline_array = tij.timeline(tij_array, 20)
 quantities_ball_janus = tij.quantities_calculator(timeline_array)
