@@ -39,7 +39,7 @@
     
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Utilities" href="../other/other.html" />
+    <link rel="next" title="Pedestrian model" href="pedestrian.html" />
     <link rel="prev" title="Ballistic motion with stop" href="ballistic.html" /> 
 </head>
 
@@ -88,9 +88,11 @@
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html">Introduction</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="models.html">Models</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="basemodel.html">Base models</a></li>
 <li class="toctree-l2"><a class="reference internal" href="brownian.html">Brownian motion</a></li>
 <li class="toctree-l2"><a class="reference internal" href="ballistic.html">Ballistic motion with stop</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Active brownian motion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pedestrian.html">Pedestrian model</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../other/other.html">Utilities</a></li>
@@ -163,8 +165,62 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="active-brownian-motion">
-<h1>Active brownian motion<a class="headerlink" href="#active-brownian-motion" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-activebrownianparticles">
+<span id="active-brownian-motion"></span><h1>Active brownian motion<a class="headerlink" href="#module-activebrownianparticles" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="activebrownianparticles.Vicsek">
+<em class="property">class </em><code class="descclassname">activebrownianparticles.</code><code class="descname">Vicsek</code><span class="sig-paren">(</span><em>v</em>, <em>n_particles</em>, <em>noise</em>, <em>dt=20</em>, <em>radius=1</em>, <em>surface=10000</em>, <em>n_steps=2000</em>, <em>janus=False</em>, <em>stop=False</em><span class="sig-paren">)</span><a class="headerlink" href="#activebrownianparticles.Vicsek" title="Permalink to this definition">¶</a></dt>
+<dd><p>This class represents the motion of particles according to the Vicsek model in 2 dimensions. The motion of the
+particles is restricted in a box and is not elastic. If stop is set to True, then the particles stop at each
+contact. In this case, they separate in the same conditions as in the BallStop class.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>v</strong> (<em>float</em><em> or </em><em>int</em>) – Speed of the particle</li>
+<li><strong>n_particles</strong> (<em>int</em>) – Number of particles in the box</li>
+<li><strong>dt</strong> (<em>float</em><em>, </em><em>optional</em>) – 20 by default. Increment of time for each step.</li>
+<li><strong>radius</strong> (<em>float</em><em>, </em><em>optional</em>) – 1 by default. radius of the particles. It as constant for all the particles</li>
+<li><strong>surface</strong> (<em>float</em><em>, </em><em>optional</em>) – 10000 by default. Surface of the box. Box is a square, hence length_side = square_root(surface)</li>
+<li><strong>n_steps</strong> (<em>int</em><em>, </em><em>optional</em>) – 2000 by default. Number of steps that we consider for the total movement of the particles.</li>
+<li><strong>janus</strong> (<em>bool</em><em>, </em><em>optional</em>) – False by default. Particles are janus particles if set to True.</li>
+<li><strong>stop</strong> (<em>bool</em><em>, </em><em>optional</em>) – stop the particle each time it encounters another one.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="activebrownianparticles.Vicsek.mean_angle">
+<code class="descname">mean_angle</code><span class="sig-paren">(</span><em>index</em><span class="sig-paren">)</span><a class="headerlink" href="#activebrownianparticles.Vicsek.mean_angle" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function calculates the mean angle of the neighbors of each particle.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Array of angles of length n_particles</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">np.array</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="activebrownianparticles.Vicsek.update_velocities">
+<code class="descname">update_velocities</code><span class="sig-paren">(</span><em>contact_pairs=None</em>, <em>contact_index=None</em><span class="sig-paren">)</span><a class="headerlink" href="#activebrownianparticles.Vicsek.update_velocities" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function updates the velocities of each particle considering the definition of the Vicsek model. Each
+particle changes its angle to align itself with is neighbors, hence the velocities vectors are updated at each
+step.
+:param contact_pairs: Default is None (if self.stop is set to False). Array of all the pairs of contact [i, j]. Shape is (n_contacts, 2).
+:type contact_pairs: np.array, optional
+:param contact_index: Default is None (if self.stop is set to False). Index of the particles in contact.
+:type contact_index: np.array</p>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 
 
@@ -173,7 +229,7 @@
           </div>
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="../other/other.html" class="btn btn-neutral float-right" title="Utilities" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="pedestrian.html" class="btn btn-neutral float-right" title="Pedestrian model" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
         <a href="ballistic.html" class="btn btn-neutral float-left" title="Ballistic motion with stop" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 

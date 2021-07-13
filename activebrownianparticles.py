@@ -1,31 +1,30 @@
 import numpy as np
-import common_calc as cc
 import basemodel as bm
 import scipy.spatial as spatial
 
 
 class Vicsek(bm.AbstractBwsAbpModel):
     """
-        This class represents the motion of particles according to the Vicsek model in 2 dimensions. The motion of the
-        particles is restricted in a box and is not elastic. If stop is set to True, then the particles stop at each
-        contact. In this case, they separate in the same conditions as in the BallStop class.
+    This class represents the motion of particles according to the Vicsek model in 2 dimensions. The motion of the
+    particles is restricted in a box and is not elastic. If stop is set to True, then the particles stop at each
+    contact. In this case, they separate in the same conditions as in the BallStop class.
 
-        :param v: Speed of the particle
-        :type v: float or int
-        :param dt: Increment of time for each step. Constant * dt is the variance of the normal distribution that we use to calculate the increment of all the positions at each step.
-        :type dt: float or int
-        :param radius: radius of the particles. It as constant for all the particles
-        :type radius: float or int
-        :param n_particles: Number of particles in the box
-        :type n_particles: int
-        :param surface: Surface of the box. We consider the box as a square, hence the length of the side is equal to the square root of the surface.
-        :type surface: float or int
-        :param n_steps: Number of steps that we consider for the total movement of the particles.
-        :type n_steps: int
-        :param noise: Adds noise to the angle of the particle
-        :type noise: float
-        :param stop: stop the particle each time it encounters another one.
-        :type brownian: bool, optional
+    :param v: Speed of the particle
+    :type v: float or int
+    :param n_particles: Number of particles in the box
+    :type n_particles: int
+    :param dt: 20 by default. Increment of time for each step.
+    :type dt: float, optional
+    :param radius: 1 by default. radius of the particles. It as constant for all the particles
+    :type radius: float, optional
+    :param surface: 10000 by default. Surface of the box. Box is a square, hence length_side = square_root(surface)
+    :type surface: float, optional
+    :param n_steps: 2000 by default. Number of steps that we consider for the total movement of the particles.
+    :type n_steps: int, optional
+    :param janus: False by default. Particles are janus particles if set to True.
+    :type janus: bool, optional
+    :param stop: stop the particle each time it encounters another one.
+    :type stop: bool, optional
         """
 
     def __init__(self, v, n_particles, noise, dt=20, radius=1, surface=10000, n_steps=2000, janus=False, stop=False):
@@ -54,6 +53,10 @@ class Vicsek(bm.AbstractBwsAbpModel):
         This function updates the velocities of each particle considering the definition of the Vicsek model. Each
         particle changes its angle to align itself with is neighbors, hence the velocities vectors are updated at each
         step.
+        :param contact_pairs: Default is None (if self.stop is set to False). Array of all the pairs of contact [i, j]. Shape is (n_contacts, 2).
+        :type contact_pairs: np.array, optional
+        :param contact_index: Default is None (if self.stop is set to False). Index of the particles in contact.
+        :type contact_index: np.array
         """
         if self.stop:
             self.update_velocities_stop(contact_pairs, contact_index)

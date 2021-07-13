@@ -1,0 +1,577 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html4" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Pedestrian model &mdash; Interaction models  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Utilities" href="../other/other.html" />
+    <link rel="prev" title="Active brownian motion" href="active.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Interaction models
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html">Introduction</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="models.html">Models</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="basemodel.html">Base models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="brownian.html">Brownian motion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ballistic.html">Ballistic motion with stop</a></li>
+<li class="toctree-l2"><a class="reference internal" href="active.html">Active brownian motion</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Pedestrian model</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../other/other.html">Utilities</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Interaction models</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="models.html">Models</a> &raquo;</li>
+        
+      <li>Pedestrian model</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../../_sources/rst/models/pedestrian.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-pedestrianmodel">
+<span id="pedestrian-model"></span><h1>Pedestrian model<a class="headerlink" href="#module-pedestrianmodel" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="pedestrianmodel.Pedestrian">
+<em class="property">class </em><code class="descclassname">pedestrianmodel.</code><code class="descname">Pedestrian</code><span class="sig-paren">(</span><em>v</em>, <em>n_particles</em>, <em>angle_range=1.0471975511965976</em>, <em>dt=20</em>, <em>radius=1</em>, <em>surface=10000</em>, <em>n_steps=2000</em><span class="sig-paren">)</span><a class="headerlink" href="#pedestrianmodel.Pedestrian" title="Permalink to this definition">¶</a></dt>
+<dd><p>This class is an implementation of a pedestrian model greatly inspired by [1]. In addition to the model described
+in this paper, we added a target and stop mechanism: each particle has a list of possible targets (another particle
+or a particular region of the box). Each target has a given probability to be chosen. Once the target is defined,
+the particle moves until it reaches the target, stops, stays a given amount of time, then chooses a new target.
+[1]: How simple rules determine pedestrian behavior and crowd disasters.
+M Moussaïd, D Helbing, G Theraulaz - Proceedings of the National Academy of Sciences, 2011</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>v</strong> (<em>float</em>) – Speed of the particle</li>
+<li><strong>n_particles</strong> (<em>int</em>) – Number of particles in the box</li>
+<li><strong>angle_range</strong> (<em>float</em>) – np.pi/3 by default. Range of angles where a particle ‘sees’ information.</li>
+<li><strong>dt</strong> (<em>float</em><em>, </em><em>optional</em>) – 20 by default. Increment of time for each step.</li>
+<li><strong>radius</strong> (<em>float</em><em>, </em><em>optional</em>) – 1 by default. radius of the particles. It as constant for all the particles</li>
+<li><strong>surface</strong> (<em>float</em><em>, </em><em>optional</em>) – 10000 by default. Surface of the box. Box is a square, hence length_side = square_root(surface)</li>
+<li><strong>n_steps</strong> (<em>int</em><em>, </em><em>optional</em>) – 2000 by default. Number of steps that we consider for the total movement of the particles.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="pedestrianmodel.Pedestrian.border">
+<code class="descname">border</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pedestrianmodel.Pedestrian.border" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function calculates the collision of a particle with a wall.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pedestrianmodel.Pedestrian.circles_dunbar">
+<code class="descname">circles_dunbar</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pedestrianmodel.Pedestrian.circles_dunbar" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function defines at the beginning of the simulation all the types of relationship for each particle i. This
+function returns a probability array, where the elt of index (i, j) is the probability that particle i chooses
+j as a target. This array is not symmetric.
+:return: array of probabilities. Shape is (n_particles, n_particles)
+:rtype: np.array</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pedestrianmodel.Pedestrian.cost_angle_function">
+<code class="descname">cost_angle_function</code><span class="sig-paren">(</span><em>angle</em>, <em>subj_desired_angle</em>, <em>i</em>, <em>possible_i_index</em>, <em>near_wall</em><span class="sig-paren">)</span><a class="headerlink" href="#pedestrianmodel.Pedestrian.cost_angle_function" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function calculates the cost_angle_function for a given angle. This function is described in [1].
+Each particle i has a desired angle but has obstacle on its path. The cost function calculates the cost of a
+possible path for one angle.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>angle</strong> (<em>float</em>) – angle that particle i looks at.</li>
+<li><strong>subj_desired_angle</strong> (<em>float</em>) – optimum angle to go to particle i ‘s destination if there’s no obstacle.</li>
+<li><strong>i</strong> (<em>int</em>) – index of particle i.</li>
+<li><strong>possible_i_index</strong> (<em>np.array</em>) – All the possible particle neighbors that can be on the path of i.</li>
+<li><strong>near_wall</strong> (<em>bool</em>) – True if particle is near a wall, False otherwise.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">value of the cost function.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pedestrianmodel.Pedestrian.departure">
+<code class="descname">departure</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pedestrianmodel.Pedestrian.departure" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function calculates if particles in contact stay together or part from each other. The function also
+defines the new targets of particles that have just finished a contact.
+:return: Index of particles that separate
+:rtype: np.array</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pedestrianmodel.Pedestrian.distance_to_wall">
+<code class="descname">distance_to_wall</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pedestrianmodel.Pedestrian.distance_to_wall" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function calculates the distance to every walls in the simulation.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">distance to every wall. Shape = (n_particles, n_walls)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">np.array</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pedestrianmodel.Pedestrian.get_in_range_neighbors">
+<code class="descname">get_in_range_neighbors</code><span class="sig-paren">(</span><em>free_index</em><span class="sig-paren">)</span><a class="headerlink" href="#pedestrianmodel.Pedestrian.get_in_range_neighbors" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function returns all the neighbors of all the particles in free_index.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>free_index</strong> (<em>np.array</em>) – index of the particles of interest.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">array of neighbors.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">np.array of lists</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pedestrianmodel.Pedestrian.get_target">
+<code class="descname">get_target</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pedestrianmodel.Pedestrian.get_target" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function returns the target of each particle</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">array of targets. Shape is (n_particles, 1)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">np.array</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pedestrianmodel.Pedestrian.iter_movement">
+<code class="descname">iter_movement</code><span class="sig-paren">(</span><em>step</em>, <em>animation=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pedestrianmodel.Pedestrian.iter_movement" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function updates the self.position_array at time step*dt. The function takes the position of the array
+(x, y) and adds a ballistic infinitesimal step (dx, dy). Hence the new position is (x+dx, y+dy). The borders of
+the box are also considered with the self.border() function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>step</strong> (<em>int</em>) – step of the iteration. It ranges from 0 to self.n_steps-1</li>
+<li><strong>animation</strong> (<em>bool</em><em>, </em><em>optional</em>) – This parameter is set to False by default. This means that the creation_tij array is stored and can be analyzed. It is set to true only when the animation is run. As the animation can run indefinitely, too much data can be stored</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pedestrianmodel.Pedestrian.optimum_angle">
+<code class="descname">optimum_angle</code><span class="sig-paren">(</span><em>subj_desired_angle</em>, <em>i</em>, <em>possible_i_index</em>, <em>near_wall</em><span class="sig-paren">)</span><a class="headerlink" href="#pedestrianmodel.Pedestrian.optimum_angle" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function finds the optimum angle for particle i to get to its target without entering in collision
+with other particles.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>subj_desired_angle</strong> (<em>float</em>) – optimum angle to go to particle i ‘s destination if there’s no obstacle.</li>
+<li><strong>i</strong> (<em>int</em>) – index of particle i.</li>
+<li><strong>possible_i_index</strong> (<em>np.array</em>) – All the possible particle neighbors that can be on the path of i.</li>
+<li><strong>near_wall</strong> (<em>bool</em>) – True if particle is near a wall, False otherwise.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">optimum angle that particle i should take.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pedestrianmodel.Pedestrian.particle_body_collision">
+<code class="descname">particle_body_collision</code><span class="sig-paren">(</span><em>i</em>, <em>j</em>, <em>dist_ij</em>, <em>k=5000</em><span class="sig-paren">)</span><a class="headerlink" href="#pedestrianmodel.Pedestrian.particle_body_collision" title="Permalink to this definition">¶</a></dt>
+<dd><p>This updates the velocity of particles that are in contact but aren’t the target of one another.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>i</strong> (<em>int</em>) – index of particle i</li>
+<li><strong>j</strong> (<em>int</em>) – index of particle j</li>
+<li><strong>dist_ij</strong> (<em>float</em>) – distance between i and j</li>
+<li><strong>k</strong> (<em>float</em>) – force constant</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pedestrianmodel.Pedestrian.particle_collision_horizon">
+<code class="descname">particle_collision_horizon</code><span class="sig-paren">(</span><em>angle</em>, <em>i</em>, <em>possible_i_index</em><span class="sig-paren">)</span><a class="headerlink" href="#pedestrianmodel.Pedestrian.particle_collision_horizon" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function calculates the distance to collision between the particle i and every other possible particle in
+the box for a given angle. Particle i looks at all angles between -self.range and + self.range at a maximum
+distance of self.d_max. If the collision distance, is superior to self.d_max then self.d_max si returned.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>angle</strong> (<em>float</em>) – angle particle i looks at.</li>
+<li><strong>i</strong> (<em>int</em>) – particle of index i</li>
+<li><strong>possible_i_index</strong> (<em>np.array</em>) – all the particles that can be possibly in contact with i</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">distance to collision</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pedestrianmodel.Pedestrian.particles_contact">
+<code class="descname">particles_contact</code><span class="sig-paren">(</span><em>false_contact_pairs</em><span class="sig-paren">)</span><a class="headerlink" href="#pedestrianmodel.Pedestrian.particles_contact" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function updates the velocities of particles i and j that are in contact but shouldn’t be.
+:param false_contact_pairs: array of all the pairs of particles that shouldn’t be in contact.
+:type false_contact_pairs: np.array</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pedestrianmodel.Pedestrian.real_contact">
+<code class="descname">real_contact</code><span class="sig-paren">(</span><em>contact_pairs</em><span class="sig-paren">)</span><a class="headerlink" href="#pedestrianmodel.Pedestrian.real_contact" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function finds the pairs of particles that are ‘really’ in contact: if two particles are in contact but not
+a target of one another, then they are not a ‘real’ contact. On the opposite, if two particles are in contact
+but a target of one another, then they are a ‘real’ contact.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>contact_pairs</strong> (<em>np.array</em>) – All the pairs of contact. Shape is (m, 2)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">index of the real pairs of contact, and the index of the particles in real contact. Shape is (2, ).</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">tuple of np.array</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pedestrianmodel.Pedestrian.target">
+<code class="descname">target</code><span class="sig-paren">(</span><em>index</em><span class="sig-paren">)</span><a class="headerlink" href="#pedestrianmodel.Pedestrian.target" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function returns a target for each particle. A target can be another particle or a specific point in the
+box.
+:param index: Index of the particles that need a new target.
+:type index: np.array
+:return: array of the new targets.
+:rtype: np.array</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pedestrianmodel.Pedestrian.total_movement">
+<code class="descname">total_movement</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pedestrianmodel.Pedestrian.total_movement" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function iterates all the Brownian motion throughout the n_steps and returns the tij array to be analyzed</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Returns the tij array. It represents all the interactions between particles i and j at time t</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">np.array</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pedestrianmodel.Pedestrian.total_optimum_angle">
+<code class="descname">total_optimum_angle</code><span class="sig-paren">(</span><em>free_index</em><span class="sig-paren">)</span><a class="headerlink" href="#pedestrianmodel.Pedestrian.total_optimum_angle" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function finds the optimum angle for all the particles in free_index to get to their target without
+entering in collision with other particles.
+:param free_index: index of the particles of interest.
+:type free_index: np.array</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pedestrianmodel.Pedestrian.update_velocities">
+<code class="descname">update_velocities</code><span class="sig-paren">(</span><em>real_contact_pairs</em>, <em>real_contact_index</em>, <em>departure_index</em><span class="sig-paren">)</span><a class="headerlink" href="#pedestrianmodel.Pedestrian.update_velocities" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function updates the velocities of all the particles, according to what is described in [1]. The stop
+mechanism is added, and the velocities for particles in contact is set to zero. The departure mechanism is also
+added: after a contact, particles part to a new destination.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>real_contact_pairs</strong> (<em>np.array</em>) – all the pairs of contact. Shape is (t, 2)</li>
+<li><strong>real_contact_index</strong> (<em>np.array</em>) – indexes of the particles in contact. Shape is (m, )</li>
+<li><strong>departure_index</strong> (<em>np.array</em>) – all the particles that part from their previous contact.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pedestrianmodel.Pedestrian.wall_body_collision">
+<code class="descname">wall_body_collision</code><span class="sig-paren">(</span><em>i</em>, <em>w</em>, <em>dist_iw</em>, <em>k=0.05</em><span class="sig-paren">)</span><a class="headerlink" href="#pedestrianmodel.Pedestrian.wall_body_collision" title="Permalink to this definition">¶</a></dt>
+<dd><p>This updates the velocity of a particle that is in contact with a wall w.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>i</strong> (<em>int</em>) – index of particle i</li>
+<li><strong>w</strong> (<em>np.array</em>) – wall w, which is describe by two coefficient: [a, b]. Shape is (2, )</li>
+<li><strong>dist_iw</strong> (<em>float</em>) – distance between i and wall w</li>
+<li><strong>k</strong> (<em>float</em>) – force constant</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pedestrianmodel.Pedestrian.wall_collision_horizon">
+<code class="descname">wall_collision_horizon</code><span class="sig-paren">(</span><em>angle</em>, <em>i</em><span class="sig-paren">)</span><a class="headerlink" href="#pedestrianmodel.Pedestrian.wall_collision_horizon" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function calculates the distance to collision between the particle i and every other possible wall in
+the box for a given angle. Particle i looks at all angles between -self.range and + self.range at a maximum
+distance of self.d_max. If the collision distance is superior to self.d_max, then self.d_max si returned.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>angle</strong> (<em>float</em>) – angle particle i looks at.</li>
+<li><strong>i</strong> (<em>int</em>) – particle of index i</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">distance to collision</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="../other/other.html" class="btn btn-neutral float-right" title="Utilities" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="active.html" class="btn btn-neutral float-left" title="Active brownian motion" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Romain Simon.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

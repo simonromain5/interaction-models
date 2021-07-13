@@ -88,9 +88,11 @@
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html">Introduction</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="models.html">Models</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="basemodel.html">Base models</a></li>
 <li class="toctree-l2"><a class="reference internal" href="brownian.html">Brownian motion</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Ballistic motion with stop</a></li>
 <li class="toctree-l2"><a class="reference internal" href="active.html">Active brownian motion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pedestrian.html">Pedestrian model</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../other/other.html">Utilities</a></li>
@@ -163,8 +165,58 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="ballistic-motion-with-stop">
-<h1>Ballistic motion with stop<a class="headerlink" href="#ballistic-motion-with-stop" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-ballisticwithstop">
+<span id="ballistic-motion-with-stop"></span><h1>Ballistic motion with stop<a class="headerlink" href="#module-ballisticwithstop" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="ballisticwithstop.BallStop">
+<em class="property">class </em><code class="descclassname">ballisticwithstop.</code><code class="descname">BallStop</code><span class="sig-paren">(</span><em>v</em>, <em>n_particles</em>, <em>dt=20</em>, <em>radius=1</em>, <em>surface=10000</em>, <em>n_steps=2000</em>, <em>brownian=False</em>, <em>janus=False</em><span class="sig-paren">)</span><a class="headerlink" href="#ballisticwithstop.BallStop" title="Permalink to this definition">¶</a></dt>
+<dd><p>This class represents the ballistic motion of particles in 2 dimensions with a stop at each contact. The motion of
+the particles is restricted in a box and is not elastic. When two particles are in contact, their new velocity
+vectors are taken randomly. One of the option of the class is to set brownian to True. In this case, the particle
+will ally ballistic motion and a brownian motion.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>v</strong> (<em>float</em><em> or </em><em>int</em>) – Speed of the particle</li>
+<li><strong>n_particles</strong> (<em>int</em>) – Number of particles in the box</li>
+<li><strong>dt</strong> (<em>float</em><em>, </em><em>optional</em>) – 20 by default. Increment of time for each step.</li>
+<li><strong>radius</strong> (<em>float</em><em>, </em><em>optional</em>) – 1 by default. radius of the particles. It as constant for all the particles</li>
+<li><strong>surface</strong> (<em>float</em><em>, </em><em>optional</em>) – 10000 by default. Surface of the box. Box is a square, hence length_side = square_root(surface)</li>
+<li><strong>n_steps</strong> (<em>int</em><em>, </em><em>optional</em>) – 2000 by default. Number of steps that we consider for the total movement of the particles.</li>
+<li><strong>brownian</strong> (<em>bool</em><em>, </em><em>optional</em>) – False by default. Adds a brownian motion to the particles if set to True.</li>
+<li><strong>janus</strong> (<em>bool</em><em>, </em><em>optional</em>) – False by default. Particles are janus particles if set to True.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="ballisticwithstop.BallStop.update_velocities">
+<code class="descname">update_velocities</code><span class="sig-paren">(</span><em>contact_pairs</em>, <em>contact_index</em><span class="sig-paren">)</span><a class="headerlink" href="#ballisticwithstop.BallStop.update_velocities" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function updates the velocities of all the particles. For all the particles that are not in contact with
+another particle, then their velocities are not updated, unless self.brownian is set to True (The particles will
+have a brownian motion). For all the particles that are in contact with another particle, then their velocities
+are updated randomly. Consider two particles i and j, and the vector u that link the center of i with the center
+of j. If the new velocities vi and vj are such as u.vi &lt;= 0 &lt;= u.vj, then the particles keep these velocities.
+Else, vi and vj are set to 0. The probability that two particles part from each other is 1/4.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>contact_pairs</strong> (<em>np.array</em>) – Array of all the pairs of contact [i, j]. Shape is (n_contacts, 2)</li>
+<li><strong>contact_index</strong> (<em>np.array</em>) – Index of the particles in contact.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 
 

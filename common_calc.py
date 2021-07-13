@@ -2,24 +2,6 @@ import numpy as np
 import tij
 
 
-def projection(centers_array, velocity_i_array, velocity_j_array):
-    """
-    This function returns True if velocity_i and velocity_j face opposite directions considering the vector that links
-    the center of particle i and particle j.
-    :param centers_array: all the vectors that link the centers of particle i and particle j.
-    :type centers_array: np.array
-    :param velocity_i_array: vector of the velocity of particle i
-    :type velocity_i_array: np.array
-    :param velocity_j_array: array of vectors of the velocity of particle j (neighbors of i)
-    :type velocity_j_array: np.array
-    :return: True if the two velocity vectors face opposite directions
-    :rtype: bool
-    """
-    a = np.einsum('ij,ij->i', centers_array, velocity_i_array)
-    b = np.einsum('ij,ij->i', centers_array, velocity_j_array)
-    return np.logical_and(a <= 0, b >= 0)
-
-
 def cost_function(v, cl):
     mod = cl.Vicsek(v, 20, 1, 100, 10000, 2000, 1, stop=True)
     vi_tij = mod.total_movement()
@@ -40,23 +22,3 @@ def cost_function(v, cl):
         mse += np.mean((counts1 - counts2) ** 2)
 
     return np.sqrt(mse)
-
-
-def unit_vector(vector):
-    """ Returns the unit vector of the vector.  """
-    return vector / np.linalg.norm(vector)
-
-
-def angle_between(v1, v2):
-    """ Returns the angle in radians between vectors 'v1' and 'v2'::
-
-            >>> angle_between((1, 0, 0), (0, 1, 0))
-            1.5707963267948966
-            >>> angle_between((1, 0, 0), (1, 0, 0))
-            0.0
-            >>> angle_between((1, 0, 0), (-1, 0, 0))
-            3.141592653589793
-    """
-    v1_u = unit_vector(v1)
-    v2_u = unit_vector(v2)
-    return np.arccos(np.clip(np.dot(v1_u, v2_u), -1.0, 1.0))

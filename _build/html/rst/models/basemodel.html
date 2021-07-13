@@ -1,0 +1,503 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html4" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Base models &mdash; Interaction models  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Brownian motion" href="brownian.html" />
+    <link rel="prev" title="Models" href="models.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Interaction models
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html">Introduction</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="models.html">Models</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Base models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="brownian.html">Brownian motion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ballistic.html">Ballistic motion with stop</a></li>
+<li class="toctree-l2"><a class="reference internal" href="active.html">Active brownian motion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pedestrian.html">Pedestrian model</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../other/other.html">Utilities</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Interaction models</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="models.html">Models</a> &raquo;</li>
+        
+      <li>Base models</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../../_sources/rst/models/basemodel.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-basemodel">
+<span id="base-models"></span><h1>Base models<a class="headerlink" href="#module-basemodel" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="basemodel.AbstractBwsAbpModel">
+<em class="property">class </em><code class="descclassname">basemodel.</code><code class="descname">AbstractBwsAbpModel</code><span class="sig-paren">(</span><em>v</em>, <em>n_particles</em>, <em>dt</em>, <em>radius</em>, <em>surface</em>, <em>n_steps</em>, <em>janus</em>, <em>stop</em><span class="sig-paren">)</span><a class="headerlink" href="#basemodel.AbstractBwsAbpModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>This class is the common model for both the ballistic with stop and the active brownian particle models implemented.
+The common functions for these two models that cannot be implemented in the AbstractTotalModel are written here.
+This class is defined as abstract because it cannot be instantiated. it it designed to be a parent class.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>v</strong> (<em>float</em><em> or </em><em>int</em>) – Speed of the particle</li>
+<li><strong>dt</strong> (<em>float</em><em> or </em><em>int</em>) – Increment of time for each step. Constant * dt is the variance of the normal distribution that we use to calculate the increment of all the positions at each step.</li>
+<li><strong>radius</strong> (<em>float</em><em> or </em><em>int</em>) – radius of the particles. It as constant for all the particles</li>
+<li><strong>n_particles</strong> (<em>int</em>) – Number of particles in the box</li>
+<li><strong>surface</strong> (<em>float</em><em> or </em><em>int</em>) – Surface of the box. We consider the box as a square, hence the length of the side is equal to the square root of the surface.</li>
+<li><strong>n_steps</strong> (<em>int</em>) – Number of steps that we consider for the total movement of the particles.</li>
+<li><strong>noise</strong> (<em>float</em>) – Adds noise to the angle of the particle</li>
+<li><strong>stop</strong> – stop the particle each time it encounters another one.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="basemodel.AbstractBwsAbpModel.border">
+<code class="descname">border</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#basemodel.AbstractBwsAbpModel.border" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function sets to 0 the velocity of a particle that goes out of the box. The particle doesn’t move out of
+the border until the randomly chosen perpendicular velocity to the border makes the particle reenter the box.
+The particle can glide on the border.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="basemodel.AbstractBwsAbpModel.initial_positions">
+<code class="descname">initial_positions</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#basemodel.AbstractBwsAbpModel.initial_positions" title="Permalink to this definition">¶</a></dt>
+<dd><p>This functions returns the initial position array of the particles. They are chosen randomly from an uniform
+distribution: 0 + self.radius &lt;= x, y &lt;= self.side - self.radius. One of the complications is that we do not
+want overlapping of the particles.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">array of the initial positions of shape (self.n_particles, 2)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">np.array</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="basemodel.AbstractBwsAbpModel.iter_movement">
+<code class="descname">iter_movement</code><span class="sig-paren">(</span><em>step</em>, <em>animation=False</em><span class="sig-paren">)</span><a class="headerlink" href="#basemodel.AbstractBwsAbpModel.iter_movement" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function updates the self.position_array at time step*dt. The function takes the position of the array
+(x, y) and adds an infinitesimal step (dx, dy). (dx, dy) is equalt to (vx*dt, vy=dt). (vx, vy) is updated at
+each step in function of what model is used.  Hence the new position is (x+dx, y+dy). The borders of the box are</p>
+<blockquote>
+<div>also considered with the self.border() function.</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>step</strong> (<em>int</em>) – step of the iteration. It ranges from 0 to self.n_steps-1</li>
+<li><strong>animation</strong> (<em>bool</em><em>, </em><em>optional</em>) – This parameter is set to False by default. This means that the creation_tij array is stored and can be analyzed. It is set to true only when the animation is run. As the animation can run indefinitely, too much data can be stored</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="basemodel.AbstractBwsAbpModel.projection">
+<em class="property">static </em><code class="descname">projection</code><span class="sig-paren">(</span><em>centers_array</em>, <em>velocity_i_array</em>, <em>velocity_j_array</em><span class="sig-paren">)</span><a class="headerlink" href="#basemodel.AbstractBwsAbpModel.projection" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function returns True if velocity_i and velocity_j face opposite directions considering the vector that links
+the center of particle i and particle j.
+:param centers_array: all the vectors that link the centers of particle i and particle j.
+:type centers_array: np.array
+:param velocity_i_array: vector of the velocity of particle i
+:type velocity_i_array: np.array
+:param velocity_j_array: array of vectors of the velocity of particle j (neighbors of i)
+:type velocity_j_array: np.array
+:return: True if the two velocity vectors face opposite directions
+:rtype: bool</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="basemodel.AbstractBwsAbpModel.random_velocities">
+<code class="descname">random_velocities</code><span class="sig-paren">(</span><em>index</em><span class="sig-paren">)</span><a class="headerlink" href="#basemodel.AbstractBwsAbpModel.random_velocities" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function updates the velocities of the particles in index. The x and y components are chosen randomly but
+are subject to one constraint, the norm of all the new velocities is equal to self.v.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>index</strong> (<em>np.array</em>) – index of the velocities to update</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="basemodel.AbstractBwsAbpModel.update_velocities_stop">
+<code class="descname">update_velocities_stop</code><span class="sig-paren">(</span><em>contact_pairs</em>, <em>contact_index</em><span class="sig-paren">)</span><a class="headerlink" href="#basemodel.AbstractBwsAbpModel.update_velocities_stop" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function updates the velocities of the particles in the case where self.stop is set to True. If two
+particles are in contact they stop. They choose a new random velocity vector. If the two vectors are not facing
+opposite directions, then they stay in contact. Otherwise they move until their next contact.
+:param contact_pairs: array of pairs of contacts. shape = (n_contact, 2)
+:type contact_pairs: np.array
+:param contact_index: array of indexes of all the particles in contact
+:type contact_index: np.array</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="basemodel.AbstractTotalModel">
+<em class="property">class </em><code class="descclassname">basemodel.</code><code class="descname">AbstractTotalModel</code><span class="sig-paren">(</span><em>n_particles</em>, <em>dt</em>, <em>radius</em>, <em>surface</em>, <em>n_steps</em>, <em>janus</em><span class="sig-paren">)</span><a class="headerlink" href="#basemodel.AbstractTotalModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>This class is the base model for all the different interaction models implemented. All the common functions such as
+self.get_position or self.total_movement are written in this class. This class is defined as abstract because it
+cannot be instantiated. it it designed to be a parent class.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>n_particles</strong> (<em>int</em>) – Number of particles in the box</li>
+<li><strong>dt</strong> (<em>float</em>) – Increment of time for each step.</li>
+<li><strong>radius</strong> (<em>float</em>) – radius of the particles. It as constant for all the particles</li>
+<li><strong>surface</strong> (<em>float</em>) – Surface of the box. We consider the box as a square, hence the length of the side is equal to the square root of the surface.</li>
+<li><strong>n_steps</strong> (<em>int</em>) – Number of steps that we consider for the total movement of the particles.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="basemodel.AbstractTotalModel.contact">
+<code class="descname">contact</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#basemodel.AbstractTotalModel.contact" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function determines if one particle is in contact with other particles in the system.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A tuple of length 2. First, the neighbors array for each particle in contact and second, the respective
+index of each element in the main self.position_array.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">tuple of np.arrays.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="basemodel.AbstractTotalModel.creation_tij">
+<code class="descname">creation_tij</code><span class="sig-paren">(</span><em>step</em>, <em>pairs</em><span class="sig-paren">)</span><a class="headerlink" href="#basemodel.AbstractTotalModel.creation_tij" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function extend the tij array of all the interactions between particle i and j at time step*dt.
+This function principal role is to find the array of neighbors in a 2 * self.radius radius.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>step</strong> (<em>int</em>) – step of the iteration. It ranges from 0 to self.n_steps-1</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="basemodel.AbstractTotalModel.get_janus">
+<code class="descname">get_janus</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#basemodel.AbstractTotalModel.get_janus" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the radius of all the particles.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Radius of the particles. It is the same for all the particles.`</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">float</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="basemodel.AbstractTotalModel.get_position">
+<code class="descname">get_position</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#basemodel.AbstractTotalModel.get_position" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the positions of all the particles.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">An array of the positions of all the particles. It is of shape (n_particles, 2).`</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">np.array</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="basemodel.AbstractTotalModel.get_radius">
+<code class="descname">get_radius</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#basemodel.AbstractTotalModel.get_radius" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the radius of all the particles.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Radius of the particles. It is the same for all the particles.`</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">float</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="basemodel.AbstractTotalModel.get_side">
+<code class="descname">get_side</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#basemodel.AbstractTotalModel.get_side" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the length of the side of the box.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Length of the side of the box.`</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">float</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="basemodel.AbstractTotalModel.get_velocities">
+<code class="descname">get_velocities</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#basemodel.AbstractTotalModel.get_velocities" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the velocities of all the particles.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Velocities of all the particles.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">np.array</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="basemodel.AbstractTotalModel.get_velocities_norm">
+<code class="descname">get_velocities_norm</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#basemodel.AbstractTotalModel.get_velocities_norm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the velocities norm of all the particles.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Velocities norm of all the particles.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">np.array</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="basemodel.AbstractTotalModel.total_movement">
+<code class="descname">total_movement</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#basemodel.AbstractTotalModel.total_movement" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function iterates all the Brownian motion throughout the n_steps and returns the tij array to be analyzed</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Returns the tij array. It represents all the interactions between particles i and j at time t</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">np.array</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="brownian.html" class="btn btn-neutral float-right" title="Brownian motion" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="models.html" class="btn btn-neutral float-left" title="Models" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Romain Simon.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

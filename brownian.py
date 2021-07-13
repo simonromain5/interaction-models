@@ -25,9 +25,6 @@ class BrownianMotion(bm.AbstractTotalModel):
         self.position_array = np.random.rand(self.n_particles, 2) * self.side
         self.velocities_array = self.position_array
 
-    def get_velocities(self):
-        return self.velocities_array
-
     def brown_iter_2d(self):
         """Returns an array of the increment of the next position of the particles (dx, dy). As we consider a Brownian
         motion, the increment follows a 2D gaussian law of mean 0 and of variance dt.
@@ -46,7 +43,7 @@ class BrownianMotion(bm.AbstractTotalModel):
 
         :param step: step of the iteration. It ranges from 0 to self.n_steps-1
         :type step: int
-        :param animation: This parameter is set to False by default. This means that the creation_tij array is stored and can be analyzed. It is set to true only when the animation is run. As the animation can run indefinitely, too much data can be stored
+        :param animation: False by default. This means that the creation_tij array is stored and can be analyzed. It is set to true only when the animation is run. As the animation can run indefinitely, too much data can be stored
         :type animation: bool, optional
         """
         new_position = self.position_array + self.brown_iter_2d()
@@ -56,5 +53,5 @@ class BrownianMotion(bm.AbstractTotalModel):
         self.position_array = new_position
 
         if not animation:
-            contact_pairs, contact_index = self.contact(step)
+            contact_pairs, contact_index = self.contact()
             self.creation_tij(step, contact_pairs)
