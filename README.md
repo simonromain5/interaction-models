@@ -15,10 +15,9 @@ You have four choices (They are all described next):
 
 Then you need to import the wanted class. For example, the following code applies if you want to test the Brownian motion:
 
-.. code-block:: py
-   :name: import_example
-   
-   from brownian import BrownianMotion
+```
+from brownian import BrownianMotion
+```
 
 Then you need to initialize the class in function of several variables. Many variables are optional. In the case of the Brownian Motion, you need to input two variables: the coefficient of diffusion (diff) and the number of particles (n_particles) in the box. For example, if you want :math:`diff = 0.001` and :math:`n\_particles = 100`: 
 
