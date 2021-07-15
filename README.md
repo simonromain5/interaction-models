@@ -4,7 +4,6 @@ This library implements several models of human face-to-face interactions in a c
 
 ## How to run the code ?
 
-
 First, you need to choose the model you want to test.
 You have four choices (They are all described next):
 
@@ -30,7 +29,7 @@ Then, two options are possible:
 * Animate the motion
 * Get a tij file
 
-## Animation
+### Animation
 
 To animate, you have to import the MovementAnimation class and then launch the animation. There is one variable: the class you want to animate.
 
@@ -45,7 +44,7 @@ You should see an animated canvas as shown below:
 .. image:: images/canvas.png
    :width: 800
 
-## Tij array
+### Tij array
 
 To get the tij array of a model you need to run the following code:
 
