@@ -41,8 +41,7 @@ MovementAnimation(brown)
 
 You should see an animated canvas as shown below:
 
-.. image:: images/canvas.png
-   :width: 800
+![canvas](../main/rst/images/canvas.png)
 
 ### Tij array
 
