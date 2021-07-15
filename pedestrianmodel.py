@@ -46,6 +46,7 @@ class Pedestrian(bm.AbstractBwsAbpModel):
         self.position_array[0] = [10, 10]
         self.position_array[1] = [90, 90]
         self.real_pairs = []
+        self.weight_array = np.ones((n_particles, n_particles))
 
     def get_target(self):
         """
@@ -74,13 +75,9 @@ class Pedestrian(bm.AbstractBwsAbpModel):
         vi_t = self.velocities_array[i]
         vi_t_dt = self.dt * force_ij * n_ij / (320 * self.radius) + vi_t
         vi_norm = np.linalg.norm(vi_t_dt)
-        if vi_norm==0:
-            pass
+
         if vi_norm != self.v:
-            try:
-                vi_t_dt = vi_t_dt * self.v / vi_norm
-            except:
-                pass
+            vi_t_dt = vi_t_dt * self.v / vi_norm
             vi_norm = self.v
 
         self.velocities_array[i] = vi_t_dt
@@ -265,15 +262,15 @@ class Pedestrian(bm.AbstractBwsAbpModel):
         :return: optimum angle that particle i should take.
         :rtype: float
         """
-        zara = np.linspace(-self.angle_range, self.angle_range, 750)
+        possible_angle = np.linspace(-self.angle_range, self.angle_range, 750)
         y = []
-        for angle in zara:
+        for angle in possible_angle:
             y.append(self.cost_angle_function([angle], subj_desired_angle, i, possible_i_index, near_wall))
         '''out = optimize.minimize(self.cost_angle_function, np.array([subj_desired_angle]),
                                 args=(subj_desired_angle, angle_dist_i_array))
                            '''
         index_min = np.argmin(y)
-        return zara[index_min]
+        return possible_angle[index_min]
 
     def get_in_range_neighbors(self, free_index):
         """
@@ -330,6 +327,10 @@ class Pedestrian(bm.AbstractBwsAbpModel):
             desired_vector = self.desired_position[real_i] - self.position_array[real_i]
             subj_desired_angle = np.arctan2(desired_vector[1], desired_vector[0]) - self.angle_array[real_i]
             possible_i_index = np.array(elt)
+            target_i = self.target_array[i]
+
+            if target_i in possible_i_index:
+                possible_i_index = np.setdiff1d(possible_i_index, target_i)
 
             if possible_i_index.size > 0 and np.any(distance_to_wall_array[real_i] < self.d_max):
 
@@ -409,7 +410,7 @@ class Pedestrian(bm.AbstractBwsAbpModel):
         """
         distance_w_array = self.distance_to_wall()
         wall_coll_row, wall_coll_col = np.where(distance_w_array < self.radius)
-        #add orientation and self.angle range (to do)
+        # add orientation and self.angle range (to do)
         for i, elt in enumerate(wall_coll_row):
             self.wall_body_collision(elt, self.wall_array[i, :2], distance_w_array[elt, wall_coll_col[i]])
 
@@ -540,5 +541,3 @@ class Pedestrian(bm.AbstractBwsAbpModel):
         departure_index = np.unique(np.array(departure_index, dtype=int))
         self.target_array[departure_index] = self.target(departure_index)
         return np.unique(np.array(departure_index))
-
-

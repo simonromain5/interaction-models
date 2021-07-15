@@ -33,6 +33,7 @@
         <script type="text/javascript" src="../_static/underscore.js"></script>
         <script type="text/javascript" src="../_static/doctools.js"></script>
         <script type="text/javascript" src="../_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
@@ -86,7 +87,15 @@
             
             
               <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Introduction</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Introduction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#how-to-run-the-code">How to run the code ?</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#animation">Animation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#tij-array">Tij array</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#tij-interpreter">Tij interpreter</a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="models/models.html">Models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="other/other.html">Utilities</a></li>
 </ul>
@@ -159,6 +168,75 @@
   <div class="section" id="introduction">
 <h1>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h1>
 <p>This library implements several models of human face-to-face interactions in a closed environment. The models range from the brownian motion model to some specific pedestrian models.</p>
+<div class="section" id="how-to-run-the-code">
+<h2>How to run the code ?<a class="headerlink" href="#how-to-run-the-code" title="Permalink to this headline">¶</a></h2>
+<p>First, you need to choose the model you want to test.
+You have four choices (They are all described next):</p>
+<ul class="simple">
+<li>Brownian motion.</li>
+<li>Ballistic with stop.</li>
+<li>Vicsek model.</li>
+<li>Pedestrian model.</li>
+</ul>
+<p>Then you need to import the wanted class. For example, the following code applies if you want to test the Brownian motion:</p>
+<div class="highlight-py notranslate" id="import-example"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">brownian</span> <span class="kn">import</span> <span class="n">BrownianMotion</span>
+</pre></div>
+</div>
+<p>Then you need to initialize the class in function of several variables. Many variables are optional. In the case of the Brownian Motion, you need to input two variables: the coefficient of diffusion (diff) and the number of particles (n_particles) in the box. For example, if you want <span class="math notranslate nohighlight">\(diff = 0.1\)</span> and <span class="math notranslate nohighlight">\(n\_particles = 100\)</span>:</p>
+<div class="highlight-py notranslate" id="use-model"><div class="highlight"><pre><span></span><span class="n">brown</span> <span class="o">=</span> <span class="n">BrownianMotion</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Then, two options are possible:</p>
+<ul class="simple">
+<li>Animate the motion</li>
+<li>Get a tij file</li>
+</ul>
+<div class="section" id="animation">
+<h3>Animation<a class="headerlink" href="#animation" title="Permalink to this headline">¶</a></h3>
+<p>To animate, you have to import the MovementAnimation class and then launch the animation. There is one variable: the class you want to animate.</p>
+<div class="highlight-py notranslate" id="animation-example"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">animate</span> <span class="kn">import</span> <span class="n">MovementAnimation</span>
+
+<span class="n">MovementAnimation</span><span class="p">(</span><span class="n">brown</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>You should see an animated canvas as shown below:</p>
+<a class="reference internal image-reference" href="../_images/canvas.png"><img alt="../_images/canvas.png" src="../_images/canvas.png" style="width: 800px;" /></a>
+</div>
+<div class="section" id="tij-array">
+<h3>Tij array<a class="headerlink" href="#tij-array" title="Permalink to this headline">¶</a></h3>
+<p>To get the tij array of a model you need to run the following code:</p>
+<div class="highlight-py notranslate" id="tij-array-1"><div class="highlight"><pre><span></span><span class="n">brown_tij</span> <span class="o">=</span> <span class="n">brown</span><span class="o">.</span><span class="n">total_movement</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>To convert a .dat experimental file into a tij_array you need to run the following code:</p>
+<div class="highlight-py notranslate" id="tij-array-2"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">tij</span>
+
+<span class="n">path</span> <span class="o">=</span> <span class="s1">&#39;tij_ICCSS17.dat&#39;</span>
+<span class="n">tij_array</span> <span class="o">=</span> <span class="n">tij</span><span class="o">.</span><span class="n">conversion</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="tij-interpreter">
+<h3>Tij interpreter<a class="headerlink" href="#tij-interpreter" title="Permalink to this headline">¶</a></h3>
+<p>The timeline function allows to convert the tij data array into a convenient timeline_arary. The interesting data is extracted from the tij_arrays and is represented in four different graphs (Contact time distribution, Intercontact time distribution, number of contacts dsitribution and weight distribution).
+One convenient function is the compare_quantities function: it allows to compare your numerical data with experimental data. Here is a code to interpret the data:</p>
+<div class="highlight-py notranslate" id="tij-interpret-1"><div class="highlight"><pre><span></span><span class="n">pt</span> <span class="o">=</span> <span class="s1">&#39;tij_conf1.dat&#39;</span>
+<span class="n">tij_array</span> <span class="o">=</span> <span class="n">tij</span><span class="o">.</span><span class="n">conversion</span><span class="p">(</span><span class="n">pt</span><span class="p">)</span>
+<span class="n">timeline_array</span> <span class="o">=</span> <span class="n">tij</span><span class="o">.</span><span class="n">timeline</span><span class="p">(</span><span class="n">tij_array</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
+<span class="n">quantities_conf</span> <span class="o">=</span> <span class="n">tij</span><span class="o">.</span><span class="n">quantities_calculator</span><span class="p">(</span><span class="n">timeline_array</span><span class="p">)</span>
+
+<span class="n">brown</span> <span class="o">=</span> <span class="n">BrownianMotion</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+<span class="n">brown_tij</span> <span class="o">=</span> <span class="n">brown</span><span class="o">.</span><span class="n">total_movement</span><span class="p">()</span>
+<span class="n">timeline_array</span> <span class="o">=</span> <span class="n">tij</span><span class="o">.</span><span class="n">timeline</span><span class="p">(</span><span class="n">brown_tij</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
+<span class="n">quantities_brown</span> <span class="o">=</span> <span class="n">tij</span><span class="o">.</span><span class="n">quantities_calculator</span><span class="p">(</span><span class="n">timeline_array</span><span class="p">)</span>
+
+<span class="n">tij</span><span class="o">.</span><span class="n">compare_quantities</span><span class="p">([</span><span class="n">quantities_brown</span><span class="p">,</span> <span class="n">quantities_conf</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;Brownian motion&#39;</span><span class="p">,</span> <span class="s1">&#39;Conf data&#39;</span><span class="p">],</span>  <span class="n">scale</span><span class="o">=</span><span class="s1">&#39;log&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The output of the code is:</p>
+<a class="reference internal image-reference" href="../_images/compare_graphs.png"><img alt="../_images/compare_graphs.png" src="../_images/compare_graphs.png" style="width: 800px;" /></a>
+</div>
+</div>
 </div>
 
 

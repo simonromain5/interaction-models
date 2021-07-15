@@ -9,9 +9,9 @@ import tkinter as tk
 from animate import MovementAnimation as Ma
 
 
-bsb = Pedestrian(0.005, 10)
-Ma(bsb, 1000)
-bsb.total_movement()
+ped = Pedestrian(0.005, 10)
+Ma(ped)
+
 '''
 
 tij_array = bsb.total_movement()

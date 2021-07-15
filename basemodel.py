@@ -234,6 +234,7 @@ class AbstractBwsAbpModel(AbstractTotalModel):
         This function updates the velocities of the particles in the case where self.stop is set to True. If two
         particles are in contact they stop. They choose a new random velocity vector. If the two vectors are not facing
         opposite directions, then they stay in contact. Otherwise they move until their next contact.
+
         :param contact_pairs: array of pairs of contacts. shape = (n_contact, 2)
         :type contact_pairs: np.array
         :param contact_index: array of indexes of all the particles in contact
@@ -255,7 +256,7 @@ class AbstractBwsAbpModel(AbstractTotalModel):
 
     def iter_movement(self, step, animation=False):
         """This function updates the self.position_array at time step*dt. The function takes the position of the array
-        (x, y) and adds an infinitesimal step (dx, dy). (dx, dy) is equalt to (vx*dt, vy=dt). (vx, vy) is updated at
+        (x, y) and adds an infinitesimal step (dx, dy). (dx, dy) is equal to (vx*dt, vy*dt). (vx, vy) is updated at
         each step in function of what model is used.  Hence the new position is (x+dx, y+dy). The borders of the box are
          also considered with the self.border() function.
 
@@ -285,6 +286,7 @@ class AbstractBwsAbpModel(AbstractTotalModel):
         """
         This function returns True if velocity_i and velocity_j face opposite directions considering the vector that links
         the center of particle i and particle j.
+
         :param centers_array: all the vectors that link the centers of particle i and particle j.
         :type centers_array: np.array
         :param velocity_i_array: vector of the velocity of particle i

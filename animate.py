@@ -13,7 +13,7 @@ class MovementAnimation:
     :type side: float
     """
 
-    def __init__(self, cl, side):
+    def __init__(self, cl, side=1000):
         self.cl = cl
         self.side, real_side = side, self.cl.get_side()
         self.ratio = self.side / real_side

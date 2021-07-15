@@ -282,17 +282,17 @@ def make_hist(quantities, title, scale='linear'):
     else:
         scale_x, scale_y = 'linear', 'log'
 
-    # Update xaxis properties
+    # Update x axis properties
     fig.update_xaxes(title_text="Contact duration", type=scale_x, row=1, col=1)
-    fig.update_xaxes(title_text="Intercontact duration", type=scale_x, row=1, col=2)
+    fig.update_xaxes(title_text="Inter contact duration", type=scale_x, row=1, col=2)
     fig.update_xaxes(title_text="Number of contacts", type=scale_x, row=2, col=1)
     fig.update_xaxes(title_text="weight", type=scale_x, row=2, col=2)
 
-    # Update yaxis properties
-    fig.update_yaxes(title_text="Distribution of contact duration", type=scale_y, row=1, col=1)
-    fig.update_yaxes(title_text="Distribution of intercontact duration", type=scale_y, row=1, col=2)
-    fig.update_yaxes(title_text="Distribution of number of contacts", type=scale_y, row=2, col=1)
-    fig.update_yaxes(title_text="Distribution of weight", type=scale_y, row=2, col=2)
+    # Update y axis properties
+    fig.update_yaxes(title_text="Contact duration distribution", type=scale_y, row=1, col=1)
+    fig.update_yaxes(title_text="Inter contact duration distribution", type=scale_y, row=1, col=2)
+    fig.update_yaxes(title_text="Number of contacts distribution", type=scale_y, row=2, col=1)
+    fig.update_yaxes(title_text="Weight distribution", type=scale_y, row=2, col=2)
 
     for i, data in enumerate(quantities):
         a = index[i][0]
@@ -335,10 +335,10 @@ def compare_quantities(quantities_array, label_array, title='Comparison tij data
     fig.update_xaxes(title_text="weight", type=scale_x, row=2, col=2)
 
     # Update yaxis properties
-    fig.update_yaxes(title_text="Distribution of contact duration", type=scale_y, row=1, col=1)
-    fig.update_yaxes(title_text="Distribution of intercontact duration", type=scale_y, row=1, col=2)
-    fig.update_yaxes(title_text="Distribution of number of contacts", type=scale_y, row=2, col=1)
-    fig.update_yaxes(title_text="Distribution of weight", type=scale_y, row=2, col=2)
+    fig.update_yaxes(title_text="Contact duration distribution", type=scale_y, row=1, col=1)
+    fig.update_yaxes(title_text="Inter contact duration distribution", type=scale_y, row=1, col=2)
+    fig.update_yaxes(title_text="Number of contacts distribution", type=scale_y, row=2, col=1)
+    fig.update_yaxes(title_text="Weight distribution", type=scale_y, row=2, col=2)
 
     for j, data in reversed(list(enumerate(quantities_array))):
         data_label = label_array[j]
