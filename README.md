@@ -81,4 +81,4 @@ tij.compare_quantities([quantities_brown, quantities_conf], ['Brownian motion', 
 
 The output of the code is:
 
-![graphs](../main/rst/images/comapre_graphs.png)
+![graphs](../main/rst/images/compare_graphs.png)
