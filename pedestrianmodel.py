@@ -1,9 +1,6 @@
 import numpy as np
 import scipy.spatial as spatial
-import scipy.stats as stats
-import scipy.optimize as optimize
 import basemodel as bm
-import matplotlib.pyplot as plt
 
 
 class Pedestrian(bm.AbstractBwsAbpModel):
@@ -25,13 +22,17 @@ class Pedestrian(bm.AbstractBwsAbpModel):
     :type dt: float, optional
     :param radius: 1 by default. radius of the particles. It as constant for all the particles
     :type radius: float, optional
+    :param contact_radius: distance from which we consider a contact between two particles
+    :type contact_radius: float
     :param surface: 10000 by default. Surface of the box. Box is a square, hence length_side = square_root(surface)
     :type surface: float, optional
     :param n_steps: 2000 by default. Number of steps that we consider for the total movement of the particles.
     :type n_steps: int, optional
     """
-    def __init__(self, v, n_particles, angle_range=np.pi/3, dt=20, radius=1, surface=10000, n_steps=2000):
-        super().__init__(v, n_particles, dt, radius, surface, n_steps, False, False)
+
+    def __init__(self, v, n_particles, angle_range=np.pi / 3, dt=20, radius=1, contact_radius=2.5,
+                 surface=10000, n_steps=2000):
+        super().__init__(v, n_particles, dt, radius, contact_radius, surface, n_steps, False, False)
         self.angle_range = angle_range
         self.angle_array = np.arctan2(self.velocities_array[:, 1], self.velocities_array[:, 0])
         self.optimum_angle_array = np.zeros(n_particles)
@@ -39,14 +40,16 @@ class Pedestrian(bm.AbstractBwsAbpModel):
         self.velocity_norm = self.v * np.ones((n_particles, 1))
         self.tau = self.d_max / self.v
         self.wall_array = np.array([[1, 0, 0], [1, 0, -self.side], [0, 1, 0], [0, 1, -self.side]])
-        self.probability_choices = self.circles_dunbar()
+        self.weight_array = self.initial_weight('power')
+
         self.target_array = np.arange(self.n_particles)
         self.target_array[self.target_array] = self.target(self.target_array)
         self.desired_position = self.position_array[self.target_array]
         self.position_array[0] = [10, 10]
         self.position_array[1] = [90, 90]
-        self.real_pairs = []
-        self.weight_array = np.ones((n_particles, n_particles))
+        self.previous_contact = np.arange(n_particles)
+        self.real_pairs = np.empty((0, 2))
+        self.pairs_iteration = np.empty((0, 3), dtype=int)
 
     def get_target(self):
         """
@@ -56,33 +59,6 @@ class Pedestrian(bm.AbstractBwsAbpModel):
         :rtype: np.array
         """
         return self.target_array
-
-    def particle_body_collision(self, i, j, dist_ij, k=5000):
-        """
-        This updates the velocity of particles that are in contact but aren't the target of one another.
-
-        :param i: index of particle i
-        :type i: int
-        :param j: index of particle j
-        :type j: int
-        :param dist_ij: distance between i and j
-        :type dist_ij: float
-        :param k: force constant
-        :type k: float
-        """
-        force_ij = k * (2 * self.radius - dist_ij)
-        n_ij = (self.position_array[i] - self.position_array[j]) / dist_ij
-        vi_t = self.velocities_array[i]
-        vi_t_dt = self.dt * force_ij * n_ij / (320 * self.radius) + vi_t
-        vi_norm = np.linalg.norm(vi_t_dt)
-
-        if vi_norm != self.v:
-            vi_t_dt = vi_t_dt * self.v / vi_norm
-            vi_norm = self.v
-
-        self.velocities_array[i] = vi_t_dt
-        self.velocity_norm[i] = vi_norm
-        self.angle_array[i] = np.arctan2(self.velocities_array[i, 1], self.velocities_array[i, 0])
 
     def wall_body_collision(self, i, w, dist_iw, k=0.05):
         """
@@ -203,7 +179,7 @@ class Pedestrian(bm.AbstractBwsAbpModel):
         t0 = - b / (2 * a)
 
         t_plus, t_minus = (- b + np.sqrt(delta)) / (2 * a), (- b - np.sqrt(delta)) / (2 * a)
-        dist = np.where(np.logical_and(delta == 0, t0 > 0),  velocity_i_norm * t0, dist)
+        dist = np.where(np.logical_and(delta == 0, t0 > 0), velocity_i_norm * t0, dist)
         dist = np.where(np.logical_and(delta > 0, t_plus > 0), velocity_i_norm * t_plus, dist)
         dist = np.where(np.logical_and(delta > 0, t_minus > 0), velocity_i_norm * t_minus, dist)
         dist = np.where(dist > self.d_max, self.d_max, dist)
@@ -266,9 +242,6 @@ class Pedestrian(bm.AbstractBwsAbpModel):
         y = []
         for angle in possible_angle:
             y.append(self.cost_angle_function([angle], subj_desired_angle, i, possible_i_index, near_wall))
-        '''out = optimize.minimize(self.cost_angle_function, np.array([subj_desired_angle]),
-                                args=(subj_desired_angle, angle_dist_i_array))
-                           '''
         index_min = np.argmin(y)
         return possible_angle[index_min]
 
@@ -287,10 +260,7 @@ class Pedestrian(bm.AbstractBwsAbpModel):
 
         for i, elt in enumerate(possible_neighbors):
             real_i = free_index[i]
-            try:
-                elt.remove(real_i)
-            except:
-                print(repr)
+            elt.remove(real_i)
 
             if len(elt) > 0:
                 fictive_i_index = np.array(elt, dtype=int)
@@ -298,7 +268,7 @@ class Pedestrian(bm.AbstractBwsAbpModel):
                 fictive_i_vector_array = fictive_i_position_array - self.position_array[real_i]
                 vx, vy = self.velocities_array[real_i, 0], self.velocities_array[real_i, 1]
                 possible_angle_array = np.arctan2(fictive_i_vector_array[:, 1], fictive_i_vector_array[:, 0]) - \
-                    np.arctan2(vy, vx)
+                                       np.arctan2(vy, vx)
                 possible_angle_array = np.where(possible_angle_array < - np.pi,
                                                 possible_angle_array + 2 * np.pi, possible_angle_array)
                 possible_angle_array = np.where(possible_angle_array > np.pi,
@@ -307,7 +277,8 @@ class Pedestrian(bm.AbstractBwsAbpModel):
                 distance_array = np.linalg.norm(fictive_i_vector_array, axis=1)
                 extra_angle_array = np.arcsin(2 * self.radius / distance_array)
                 in_range_i_index = np.where(np.logical_and(possible_angle_array < self.angle_range + extra_angle_array,
-                                            possible_angle_array > -self.angle_range - extra_angle_array))[0]
+                                                           possible_angle_array > -self.angle_range - extra_angle_array))[
+                    0]
                 in_range_neighbors[i].extend((fictive_i_index[in_range_i_index]))
 
         return in_range_neighbors
@@ -350,7 +321,8 @@ class Pedestrian(bm.AbstractBwsAbpModel):
             else:
                 optimum_angle = subj_desired_angle
                 distance_to_obstacle = self.d_max
-
+            if np.isnan(optimum_angle):
+                a=1
             self.optimum_angle_array[real_i] = optimum_angle
 
             if 0 < distance_to_obstacle < self.d_max:
@@ -382,24 +354,25 @@ class Pedestrian(bm.AbstractBwsAbpModel):
             centers_array = position_j_array - position_i_array
             distance_array = np.linalg.norm(centers_array, axis=-1).reshape(-1, 1)
             self.position_array[i_index_array] = position_i_array - (
-                    2 * self.radius - distance_array) * centers_array / distance_array
+                    2.5 * self.radius - distance_array) * centers_array / distance_array
 
         else:
             free_index = np.arange(self.n_particles)
 
         old_velocity_norm = np.copy(self.velocity_norm[free_index])
         self.total_optimum_angle(free_index)
-        cos_angle, sin_angle = np.cos(self.optimum_angle_array[free_index]), np.sin(self.optimum_angle_array[free_index])
+        cos_angle, sin_angle = np.cos(self.optimum_angle_array[free_index]), np.sin(
+            self.optimum_angle_array[free_index])
         vx, vy = np.copy(self.velocities_array[free_index, 0]), np.copy(self.velocities_array[free_index, 1])
         self.velocities_array[free_index, 0] = cos_angle * vx - sin_angle * vy
         self.velocities_array[free_index, 1] = cos_angle * vy + sin_angle * vx
-        zero_index = np.where(old_velocity_norm == 0)[0]
+        zero_mask = old_velocity_norm == 0
 
-        if zero_index.size > 0:
-            self.velocities_array[zero_index] = self.velocity_norm[zero_index] * self.velocities_array[zero_index]
-
+        if np.any(zero_mask):
+            self.velocities_array[zero_mask] = self.velocity_norm[zero_mask] * self.velocities_array[zero_mask]
         self.velocities_array[free_index] = self.velocities_array[free_index] / old_velocity_norm * self.velocity_norm[
             free_index]
+
         self.angle_array = self.optimum_angle_array + self.angle_array
         self.angle_array = np.where(self.angle_array < - np.pi, self.angle_array + 2 * np.pi, self.angle_array)
         self.angle_array = np.where(self.angle_array > np.pi, self.angle_array - 2 * np.pi, self.angle_array)
@@ -414,6 +387,37 @@ class Pedestrian(bm.AbstractBwsAbpModel):
         for i, elt in enumerate(wall_coll_row):
             self.wall_body_collision(elt, self.wall_array[i, :2], distance_w_array[elt, wall_coll_col[i]])
 
+    def particle_body_collision(self, i, j, dist_ij, k=5000):
+        """
+        This updates the velocity of particles that are in contact but aren't the target of one another.
+
+        :param i: index of particle i
+        :type i: int
+        :param j: index of particle j
+        :type j: int
+        :param dist_ij: distance between i and j
+        :type dist_ij: float
+        :param k: force constant
+        :type k: float
+        """
+        force_ij = k * (2.5 * self.radius - dist_ij)
+
+        if force_ij == 0:
+            force_ij = 1
+
+        n_ij = (self.position_array[i] - self.position_array[j]) / dist_ij
+        vi_t = self.velocities_array[i]
+        vi_t_dt = self.dt * force_ij * n_ij / (320 * self.radius) + vi_t
+        vi_norm = np.linalg.norm(vi_t_dt)
+
+        if vi_norm != self.v:
+            vi_t_dt = vi_t_dt * self.v / vi_norm
+            vi_norm = self.v
+
+        self.velocities_array[i] = vi_t_dt
+        self.velocity_norm[i] = vi_norm
+        self.angle_array[i] = np.arctan2(self.velocities_array[i, 1], self.velocities_array[i, 0])
+
     def particles_contact(self, false_contact_pairs):
         """
         This function updates the velocities of particles i and j that are in contact but shouldn't be.
@@ -426,44 +430,9 @@ class Pedestrian(bm.AbstractBwsAbpModel):
             self.particle_body_collision(i, j, dist_ij)
             self.particle_body_collision(j, i, dist_ij)
 
-    def iter_movement(self, step, animation=False):
-        """This function updates the self.position_array at time step*dt. The function takes the position of the array
-        (x, y) and adds a ballistic infinitesimal step (dx, dy). Hence the new position is (x+dx, y+dy). The borders of
-        the box are also considered with the self.border() function.
 
-        :param step: step of the iteration. It ranges from 0 to self.n_steps-1
-        :type step: int
-        :param animation: This parameter is set to False by default. This means that the creation_tij array is stored and can be analyzed. It is set to true only when the animation is run. As the animation can run indefinitely, too much data can be stored
-        :type animation: bool, optional
-        """
-        departure_index = self.departure()
-        contact_pairs, contact_index = self.contact()
-        real_pairs_index, real_contact_index = self.real_contact(contact_pairs)
-        self.real_pairs = contact_pairs[real_pairs_index]
-        false_pairs_index = np.setdiff1d(np.arange(contact_pairs.shape[0]), real_pairs_index)
-        self.update_velocities(contact_pairs[real_pairs_index], real_contact_index, departure_index)
-        self.border()
-        self.particles_contact(contact_pairs[false_pairs_index])
-        self.position_array = self.position_array + self.velocities_array * self.dt
-        self.desired_position = self.position_array[self.target_array]
-        self.position_array[0] = [10, 10]
-        self.position_array[1] = [90, 90]
-        if not animation:
-            self.creation_tij(step, contact_pairs)
 
-    def total_movement(self):
-        """
-        This function iterates all the Brownian motion throughout the n_steps and returns the tij array to be analyzed
-
-        :return: Returns the tij array. It represents all the interactions between particles i and j at time t
-        :rtype: np.array
-        """
-        for step in range(self.n_steps):
-            self.iter_movement(step)
-
-        return np.array(self.tij)
-
-    def circles_dunbar(self):
+    def target_probability(self, index):
         """
         This function defines at the beginning of the simulation all the types of relationship for each particle i. This
         function returns a probability array, where the elt of index (i, j) is the probability that particle i chooses
@@ -471,18 +440,11 @@ class Pedestrian(bm.AbstractBwsAbpModel):
         :return: array of probabilities. Shape is (n_particles, n_particles)
         :rtype: np.array
         """
-        s = 2
-        n = self.n_particles
-        sample = np.arange(1, n)
-        sample = np.tile(sample, (n, 1))
-        [np.random.shuffle(x) for x in sample]
-        sample1 = np.concatenate((n * np.ones((n, 1), dtype=int), sample), axis=1)
-        sample2 = np.concatenate((sample, n * np.ones((n, 1), dtype=int)), axis=1)
-        sample = np.tril(sample2) + np.triu(sample1)
-        inv_sample = 1 / sample ** s
-        np.fill_diagonal(inv_sample, 0)
-        probability_choice = inv_sample / np.sum(inv_sample, axis=1)
-        return probability_choice
+        subj_weight = np.copy(self.weight_array)
+        subj_weight[index, self.target_array[index]] = 0
+        norm = np.sum(subj_weight, axis=1)
+        probability_array = subj_weight / norm[:, None]
+        return probability_array
 
     def target(self, index):
         """
@@ -493,8 +455,130 @@ class Pedestrian(bm.AbstractBwsAbpModel):
         :return: array of the new targets.
         :rtype: np.array
         """
-        new_target_array = [np.random.choice(self.n_particles, p=x) for x in self.probability_choices[index]]
+        probability_array = self.target_probability(index)
+        new_target_array = [np.random.choice(self.n_particles, p=x) for x in probability_array[index]]
         return new_target_array
+
+    def departure(self):
+        """
+        This function calculates if particles in contact stay together or part from each other. The function also
+        defines the new targets of particles that have just finished a contact.
+        :return: Index of particles that separate
+        :rtype: np.array
+        """
+        departure_index = []
+
+        for elt in self.pairs_iteration:
+            i = elt[0]
+            j = elt[1]
+            iteration = elt[2]
+            prob_0 = 0.8 * (1 - np.exp(-iteration/2))
+            prob_1 = 1-prob_0
+            dep = np.random.choice(2, p=[prob_0, prob_1])
+
+            if dep == 1:
+                departure_index.extend([i, j])
+                self.previous_contact[i] = j
+                self.previous_contact[j] = i
+
+        departure_index = np.unique(np.array(departure_index, dtype=int))
+
+        if departure_index.size > 0:
+            self.target_array[departure_index] = self.target(departure_index)
+
+        return np.unique(np.array(departure_index))
+
+    def initial_weight(self, output_type='uniform', k=2):
+        """
+        This function returns the initial weight array between all the particles that determines which will be the next
+        target of a particle. This weight array is updated at each time step.
+        :param output_type: 3 choices: ['uniform', 'power', 'exponential'], that will define the type of the initial weight array
+        :type output_type: str
+        :param k: coefficient for the 'power' and 'exponential' outputs
+        :return: initial weight array
+        :rtype: np.array
+        """
+        n = self.n_particles
+
+        if output_type == 'uniform':
+            out = np.ones((n, n))
+
+        elif output_type == 'power':
+            out = np.random.zipf(k, (n, n))
+
+        elif output_type == 'exponential':
+            out = np.random.exponential(k, (n, n))
+
+        else:
+            raise NameError(str(output_type) + ' is not in the output_type list')
+
+        out1 = np.triu(out)
+        out = out1 + np.transpose(out1)
+        np.fill_diagonal(out, 0)
+        return out
+
+    def get_desired_position(self):
+        """
+        This function returns the desired position of each particle. When a particle targets another one, it will try
+        to find the nearest point of contact with the target particle. If the particle is not attainable, then it
+        follows the particle.
+        :return: desired position array
+        :rtype: np.array
+        """
+        out = np.empty((self.n_particles, 2))
+        centers_array = self.position_array[self.target_array] - self.position_array
+        a = np.einsum('ij,ij->i', centers_array, self.velocities_array)
+        inf_mask = a <= 0
+        sup_mask = ~inf_mask
+        vel_norm = np.linalg.norm(self.velocities_array[self.target_array], axis=1)
+        non_zero_mask = vel_norm != 0
+        zero_mask = ~non_zero_mask
+        non_zero_sup_mask = np.logical_and(non_zero_mask, sup_mask)
+        zero_sup_mask = np.logical_and(zero_mask, sup_mask)
+        vel_angle_array = np.arctan2(self.velocities_array[non_zero_sup_mask, 1],
+                                     self.velocities_array[non_zero_sup_mask, 0])
+        cen_angle_array = np.arctan2(centers_array[non_zero_sup_mask, 1],
+                                     centers_array[non_zero_sup_mask, 0])
+        beta_array = cen_angle_array - vel_angle_array
+        dist_array = np.linalg.norm(centers_array[non_zero_sup_mask], axis=1)
+        target_vel = self.velocities_array[self.target_array[non_zero_sup_mask]]
+        normed_vel = target_vel / vel_norm[non_zero_sup_mask, None]
+        dist_to_obstacle = dist_array / (2 * np.cos(beta_array))
+        delta_pos = normed_vel * dist_to_obstacle[:, None]
+        zero_inf_mask = np.logical_or(inf_mask, zero_sup_mask)
+        out[zero_inf_mask] = self.position_array[self.target_array[zero_inf_mask]]
+        out[non_zero_sup_mask] = self.position_array[self.target_array[non_zero_sup_mask]] + delta_pos
+        return out
+
+    def new_pairs_iteration(self):
+        """
+        This function returns the contact pairs and the number of iterations they have stayed together in one array.
+        The two first columns are the pairs and the third is the number of iterations.
+        :return: pairs + number of iteration the pairs have stayed together.
+        :rtype: np.array.
+        """
+        if self.pairs_iteration.size == 0 and self.real_pairs.size == 0:
+            out = np.empty((0, 3), dtype=int)
+
+        elif self.pairs_iteration.size == 0:
+            out = np.concatenate((self.real_pairs, np.ones((self.real_pairs.shape[0], 1), dtype=int)), axis=1, dtype=int)
+
+        else:
+            old_pairs = self.pairs_iteration[:, :2]
+            new_in_mask = (old_pairs[:, None] == self.real_pairs).all(-1).any(-1)
+            self.pairs_iteration[new_in_mask, 2] = self.pairs_iteration[new_in_mask, 2] + 1
+            old_pairs_iteration = self.pairs_iteration[new_in_mask]
+            old_in_mask = (self.real_pairs[:, None] == old_pairs).all(-1).any(-1)
+            new_pairs = self.real_pairs[~old_in_mask]
+
+            if new_pairs.size == 0:
+                out = old_pairs_iteration
+
+            else:
+                new_pairs_iteration = np.concatenate((new_pairs, np.ones((new_pairs.shape[0], 1), dtype=int)), axis=1, dtype=int)
+                out = np.concatenate((old_pairs_iteration, new_pairs_iteration), axis=0, dtype=int)
+
+        return out
 
     def real_contact(self, contact_pairs):
         """
@@ -512,32 +596,40 @@ class Pedestrian(bm.AbstractBwsAbpModel):
 
         for i, elt in enumerate(contact_pairs):
 
-            if self.target_array[elt[0]] == elt[1] or self.target_array[elt[1]] == elt[0]:
+            if self.previous_contact[elt[0]] != elt[1]:
                 real_contact_index.extend(elt)
                 real_pairs_index.append(i)
 
         real_contact_index = np.unique(np.array(real_contact_index))
         return real_pairs_index, real_contact_index
 
-    def departure(self):
+    def iter_movement(self, step, animation=False):
+        """This function updates the self.position_array at time step*dt. The function takes the position of the array
+        (x, y) and adds a ballistic infinitesimal step (dx, dy). Hence the new position is (x+dx, y+dy). The borders of
+        the box are also considered with the self.border() function.
+
+        :param step: step of the iteration. It ranges from 0 to self.n_steps-1
+        :type step: int
+        :param animation: This parameter is set to False by default. This means that the creation_tij array is stored and can be analyzed. It is set to true only when the animation is run. As the animation can run indefinitely, too much data can be stored
+        :type animation: bool, optional
         """
-        This function calculates if particles in contact stay together or part from each other. The function also
-        defines the new targets of particles that have just finished a contact.
-        :return: Index of particles that separate
-        :rtype: np.array
-        """
-        departure_index = []
+        departure_index = self.departure()
+        contact_pairs, contact_index = self.contact()
+        real_pairs_index, real_contact_index = self.real_contact(contact_pairs)
+        self.real_pairs = contact_pairs[real_pairs_index]
+        self.pairs_iteration = self.new_pairs_iteration()
+        false_pairs_index = np.setdiff1d(np.arange(contact_pairs.shape[0]), real_pairs_index)
+        self.update_velocities(self.real_pairs, real_contact_index, departure_index)
+        self.border()
+        self.particles_contact(contact_pairs[false_pairs_index])
+        self.position_array = self.position_array + self.velocities_array * self.dt
+        self.position_array[0] = [10, 10]
+        self.position_array[1] = [90, 90]
+        self.velocities_array[0] = [0.000000000000000000000001, 0.00000000000000000000000000001]
+        self.velocities_array[1] = [0.00000000000000000000000001, 0.0000000000000000000000000001]
 
-        for elt in self.real_pairs:
-            i = elt[0]
-            j = elt[1]
-            prob_0 = self.probability_choices[i, j]
-            prob_1 = 1 - prob_0
-            dep = np.random.choice(2, p=[prob_0, prob_1])
+        self.desired_position = self.get_desired_position()
+        self.weight_array[self.real_pairs[:, 0], self.real_pairs[:, 1]] += 1
 
-            if dep == 1:
-                departure_index.extend([i, j])
-
-        departure_index = np.unique(np.array(departure_index, dtype=int))
-        self.target_array[departure_index] = self.target(departure_index)
-        return np.unique(np.array(departure_index))
+        if not animation:
+            self.creation_tij(step, contact_pairs)

@@ -11,6 +11,8 @@ class BrownianMotion(bm.AbstractTotalModel):
     :type dt: float or int
     :param radius: radius of the particles. It as constant for all the particles
     :type radius: float or int
+    :param contact_radius: distance from which we consider a contact between two particles
+    :type contact_radius: float
     :param n_particles: Number of particles in the box
     :type n_particles: int
     :param surface: Surface of the box. We consider the box as a square, hence the length of the side is equal to the square root of the surface.
@@ -19,9 +21,9 @@ class BrownianMotion(bm.AbstractTotalModel):
     :type n_steps: int
     """
 
-    def __init__(self, diff, n_particles, dt=20, radius=1, surface=10000, n_steps=2000, janus=False):
+    def __init__(self, diff, n_particles, dt=20, radius=1, contact_radius=2, surface=10000, n_steps=2000, janus=False):
         self.diff = diff
-        super().__init__(n_particles, dt, radius,  surface, n_steps, janus)
+        super().__init__(n_particles, dt, radius, contact_radius, surface, n_steps, janus)
         self.position_array = np.random.rand(self.n_particles, 2) * self.side
         self.velocities_array = self.position_array
 

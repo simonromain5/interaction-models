@@ -170,7 +170,7 @@
 <span id="pedestrian-model"></span><h1>Pedestrian model<a class="headerlink" href="#module-pedestrianmodel" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="pedestrianmodel.Pedestrian">
-<em class="property">class </em><code class="descclassname">pedestrianmodel.</code><code class="descname">Pedestrian</code><span class="sig-paren">(</span><em>v</em>, <em>n_particles</em>, <em>angle_range=1.0471975511965976</em>, <em>dt=20</em>, <em>radius=1</em>, <em>surface=10000</em>, <em>n_steps=2000</em><span class="sig-paren">)</span><a class="headerlink" href="#pedestrianmodel.Pedestrian" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">pedestrianmodel.</code><code class="descname">Pedestrian</code><span class="sig-paren">(</span><em>v</em>, <em>n_particles</em>, <em>angle_range=1.0471975511965976</em>, <em>dt=20</em>, <em>radius=1</em>, <em>contact_radius=2.5</em>, <em>surface=10000</em>, <em>n_steps=2000</em><span class="sig-paren">)</span><a class="headerlink" href="#pedestrianmodel.Pedestrian" title="Permalink to this definition">¶</a></dt>
 <dd><p>This class is an implementation of a pedestrian model greatly inspired by [1]. In addition to the model described
 in this paper, we added a target and stop mechanism: each particle has a list of possible targets (another particle
 or a particular region of the box). Each target has a given probability to be chosen. Once the target is defined,
@@ -187,6 +187,7 @@ M Moussaïd, D Helbing, G Theraulaz - Proceedings of the National Academy of Sci
 <li><strong>angle_range</strong> (<em>float</em>) – np.pi/3 by default. Range of angles where a particle ‘sees’ information.</li>
 <li><strong>dt</strong> (<em>float</em><em>, </em><em>optional</em>) – 20 by default. Increment of time for each step.</li>
 <li><strong>radius</strong> (<em>float</em><em>, </em><em>optional</em>) – 1 by default. radius of the particles. It as constant for all the particles</li>
+<li><strong>contact_radius</strong> (<em>float</em>) – distance from which we consider a contact between two particles</li>
 <li><strong>surface</strong> (<em>float</em><em>, </em><em>optional</em>) – 10000 by default. Surface of the box. Box is a square, hence length_side = square_root(surface)</li>
 <li><strong>n_steps</strong> (<em>int</em><em>, </em><em>optional</em>) – 2000 by default. Number of steps that we consider for the total movement of the particles.</li>
 </ul>
@@ -198,16 +199,6 @@ M Moussaïd, D Helbing, G Theraulaz - Proceedings of the National Academy of Sci
 <dt id="pedestrianmodel.Pedestrian.border">
 <code class="descname">border</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pedestrianmodel.Pedestrian.border" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function calculates the collision of a particle with a wall.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="pedestrianmodel.Pedestrian.circles_dunbar">
-<code class="descname">circles_dunbar</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pedestrianmodel.Pedestrian.circles_dunbar" title="Permalink to this definition">¶</a></dt>
-<dd><p>This function defines at the beginning of the simulation all the types of relationship for each particle i. This
-function returns a probability array, where the elt of index (i, j) is the probability that particle i chooses
-j as a target. This array is not symmetric.
-:return: array of probabilities. Shape is (n_particles, n_particles)
-:rtype: np.array</p>
 </dd></dl>
 
 <dl class="method">
@@ -265,6 +256,16 @@ defines the new targets of particles that have just finished a contact.
 </dd></dl>
 
 <dl class="method">
+<dt id="pedestrianmodel.Pedestrian.get_desired_position">
+<code class="descname">get_desired_position</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pedestrianmodel.Pedestrian.get_desired_position" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function returns the desired position of each particle. When a particle targets another one, it will try
+to find the nearest point of contact with the target particle. If the particle is not attainable, then it
+follows the particle.
+:return: desired position array
+:rtype: np.array</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="pedestrianmodel.Pedestrian.get_in_range_neighbors">
 <code class="descname">get_in_range_neighbors</code><span class="sig-paren">(</span><em>free_index</em><span class="sig-paren">)</span><a class="headerlink" href="#pedestrianmodel.Pedestrian.get_in_range_neighbors" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function returns all the neighbors of all the particles in free_index.</p>
@@ -299,6 +300,18 @@ defines the new targets of particles that have just finished a contact.
 </dd></dl>
 
 <dl class="method">
+<dt id="pedestrianmodel.Pedestrian.initial_weight">
+<code class="descname">initial_weight</code><span class="sig-paren">(</span><em>output_type='uniform'</em>, <em>k=2</em><span class="sig-paren">)</span><a class="headerlink" href="#pedestrianmodel.Pedestrian.initial_weight" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function returns the initial weight array between all the particles that determines which will be the next
+target of a particle. This weight array is updated at each time step.
+:param output_type: 3 choices: [‘uniform’, ‘power’, ‘exponential’], that will define the type of the initial weight array
+:type output_type: str
+:param k: coefficient for the ‘power’ and ‘exponential’ outputs
+:return: initial weight array
+:rtype: np.array</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="pedestrianmodel.Pedestrian.iter_movement">
 <code class="descname">iter_movement</code><span class="sig-paren">(</span><em>step</em>, <em>animation=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pedestrianmodel.Pedestrian.iter_movement" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function updates the self.position_array at time step*dt. The function takes the position of the array
@@ -316,6 +329,15 @@ the box are also considered with the self.border() function.</p>
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pedestrianmodel.Pedestrian.new_pairs_iteration">
+<code class="descname">new_pairs_iteration</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pedestrianmodel.Pedestrian.new_pairs_iteration" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function returns the contact pairs and the number of iterations they have stayed together in one array.
+The two first columns are the pairs and the third is the number of iterations.
+:return: pairs + number of iteration the pairs have stayed together.
+:rtype: np.array.</p>
 </dd></dl>
 
 <dl class="method">
@@ -432,19 +454,13 @@ box.
 </dd></dl>
 
 <dl class="method">
-<dt id="pedestrianmodel.Pedestrian.total_movement">
-<code class="descname">total_movement</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pedestrianmodel.Pedestrian.total_movement" title="Permalink to this definition">¶</a></dt>
-<dd><p>This function iterates all the Brownian motion throughout the n_steps and returns the tij array to be analyzed</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Returns the tij array. It represents all the interactions between particles i and j at time t</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">np.array</td>
-</tr>
-</tbody>
-</table>
+<dt id="pedestrianmodel.Pedestrian.target_probability">
+<code class="descname">target_probability</code><span class="sig-paren">(</span><em>index</em><span class="sig-paren">)</span><a class="headerlink" href="#pedestrianmodel.Pedestrian.target_probability" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function defines at the beginning of the simulation all the types of relationship for each particle i. This
+function returns a probability array, where the elt of index (i, j) is the probability that particle i chooses
+j as a target. This array is not symmetric.
+:return: array of probabilities. Shape is (n_particles, n_particles)
+:rtype: np.array</p>
 </dd></dl>
 
 <dl class="method">

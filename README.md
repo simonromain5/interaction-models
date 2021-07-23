@@ -62,10 +62,10 @@ tij_array = tij.conversion(path)
 
 ### Tij interpreter
 
-The timeline function allows to convert the tij data array into a convenient timeline_arary. The interesting data is extracted from the tij_arrays and is represented in four different graphs (Contact time distribution, Intercontact time distribution, number of contacts dsitribution and weight distribution).
+The timeline function allows to convert the tij data array into a convenient timeline_array. The interesting data is extracted from the timeline_arrays and is represented in four different graphs (Contact time distribution, Intercontact time distribution, number of contacts dsitribution and weight distribution).
 One convenient function is the compare_quantities function: it allows to compare your numerical data with experimental data. Here is a code to interpret the data:
 
-```   
+```
 pt = 'tij_conf1.dat'
 tij_array = tij.conversion(pt)
 timeline_array = tij.timeline(tij_array, 20)

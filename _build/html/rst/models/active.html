@@ -170,7 +170,7 @@
 <span id="active-brownian-motion"></span><h1>Active brownian motion<a class="headerlink" href="#module-activebrownianparticles" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="activebrownianparticles.Vicsek">
-<em class="property">class </em><code class="descclassname">activebrownianparticles.</code><code class="descname">Vicsek</code><span class="sig-paren">(</span><em>v</em>, <em>n_particles</em>, <em>noise</em>, <em>dt=20</em>, <em>radius=1</em>, <em>surface=10000</em>, <em>n_steps=2000</em>, <em>janus=False</em>, <em>stop=False</em><span class="sig-paren">)</span><a class="headerlink" href="#activebrownianparticles.Vicsek" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">activebrownianparticles.</code><code class="descname">Vicsek</code><span class="sig-paren">(</span><em>v</em>, <em>n_particles</em>, <em>noise</em>, <em>dt=20</em>, <em>radius=1</em>, <em>contact_radius=2</em>, <em>surface=10000</em>, <em>n_steps=2000</em>, <em>janus=False</em>, <em>stop=False</em><span class="sig-paren">)</span><a class="headerlink" href="#activebrownianparticles.Vicsek" title="Permalink to this definition">¶</a></dt>
 <dd><p>This class represents the motion of particles according to the Vicsek model in 2 dimensions. The motion of the
 particles is restricted in a box and is not elastic. If stop is set to True, then the particles stop at each
 contact. In this case, they separate in the same conditions as in the BallStop class.</p>
@@ -183,6 +183,7 @@ contact. In this case, they separate in the same conditions as in the BallStop c
 <li><strong>n_particles</strong> (<em>int</em>) – Number of particles in the box</li>
 <li><strong>dt</strong> (<em>float</em><em>, </em><em>optional</em>) – 20 by default. Increment of time for each step.</li>
 <li><strong>radius</strong> (<em>float</em><em>, </em><em>optional</em>) – 1 by default. radius of the particles. It as constant for all the particles</li>
+<li><strong>contact_radius</strong> (<em>float</em>) – distance from which we consider a contact between two particles</li>
 <li><strong>surface</strong> (<em>float</em><em>, </em><em>optional</em>) – 10000 by default. Surface of the box. Box is a square, hence length_side = square_root(surface)</li>
 <li><strong>n_steps</strong> (<em>int</em><em>, </em><em>optional</em>) – 2000 by default. Number of steps that we consider for the total movement of the particles.</li>
 <li><strong>janus</strong> (<em>bool</em><em>, </em><em>optional</em>) – False by default. Particles are janus particles if set to True.</li>

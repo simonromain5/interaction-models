@@ -9,8 +9,9 @@ import tkinter as tk
 from animate import MovementAnimation as Ma
 
 
-ped = Pedestrian(0.005, 10)
-Ma(ped)
+brown = bws.BallStop(0.005, 100)
+# Ma(brown)
+tij = brown.total_movement()
 
 '''
 

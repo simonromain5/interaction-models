@@ -22,12 +22,12 @@ Then you need to import the wanted class. For example, the following code applie
    
    from brownian import BrownianMotion
 
-Then you need to initialize the class in function of several variables. Many variables are optional. In the case of the Brownian Motion, you need to input two variables: the coefficient of diffusion (diff) and the number of particles (n_particles) in the box. For example, if you want :math:`diff = 0.1` and :math:`n\_particles = 100`: 
+Then you need to initialize the class in function of several variables. Many variables are optional. In the case of the Brownian Motion, you need to input two variables: the coefficient of diffusion (diff) and the number of particles (n_particles) in the box. For example, if you want :math:`diff = 0.001` and :math:`n\_particles = 100`: 
 
 .. code-block:: py
    :name: use_model
 
-   brown = BrownianMotion(0.1, 100)
+   brown = BrownianMotion(0.001, 100)
 
 Then, two options are possible:
 
@@ -74,7 +74,7 @@ To convert a .dat experimental file into a tij_array you need to run the followi
 Tij interpreter
 ***************
 
-The timeline function allows to convert the tij data array into a convenient timeline_arary. The interesting data is extracted from the tij_arrays and is represented in four different graphs (Contact time distribution, Intercontact time distribution, number of contacts dsitribution and weight distribution).
+The timeline function allows to convert the tij data array into a convenient timeline_array. The interesting data is extracted from the timeline_arrays and is represented in four different graphs (Contact time distribution, Intercontact time distribution, number of contacts dsitribution and weight distribution).
 One convenient function is the compare_quantities function: it allows to compare your numerical data with experimental data. Here is a code to interpret the data:
 
 .. code-block:: py
@@ -85,7 +85,7 @@ One convenient function is the compare_quantities function: it allows to compare
    timeline_array = tij.timeline(tij_array, 20)
    quantities_conf = tij.quantities_calculator(timeline_array)
 
-   brown = BrownianMotion(0.1, 100)
+   brown = BrownianMotion(0.001, 100)
    brown_tij = brown.total_movement()
    timeline_array = tij.timeline(brown_tij, 20)
    quantities_brown = tij.quantities_calculator(timeline_array)

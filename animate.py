@@ -33,19 +33,19 @@ class MovementAnimation:
         This function is the one that draws at each iteration the new position of the particles.
         """
         position_array = self.cl.get_position()
-        velocities_array = self.cl.get_velocities()
+        #velocities_array = self.cl.get_velocities()
 
         if self.janus:
-            # velocities_array = self.cl.get_velocities()
-            a=1
+            velocities_array = self.cl.get_velocities()
+            #a=1
         else:
             self.canvas.delete("all")
 
         for i, elt in enumerate(position_array):
             x, y = elt[0] * self.ratio, elt[1] * self.ratio
-            v = velocities_array[i]
+            #v = velocities_array[i]
             if self.janus:
-                # v = velocities_array[i]
+                v = velocities_array[i]
 
                 if np.any(v):
                     self.canvas.delete(str(i)+'a')
@@ -69,10 +69,10 @@ class MovementAnimation:
 
             else:
                 self.canvas.create_oval(x - self.radius, y + self.radius, x + self.radius, y - self.radius, fill='blue')
-                self.canvas.create_text(x-self.radius/2, y, text=str(i), fill='red')
-                target = self.cl.get_target()
-                self.canvas.create_text(x+self.radius/2, y, text=str(target[i]), fill='green')
-                self.canvas.create_text(x + 3 * self.radius, y, text=str(np.linalg.norm(v))[:6], fill='green')
+                #self.canvas.create_text(x-self.radius/2, y, text=str(i), fill='red')
+                #target = self.cl.get_target()
+                #self.canvas.create_text(x+self.radius/2, y, text=str(target[i]), fill='green')
+                #self.canvas.create_text(x + 3 * self.radius, y, text=str(np.linalg.norm(v))[:6], fill='green')
         self.step += 1
         self.window.update()
         self.cl.iter_movement(self.step, animation=True)

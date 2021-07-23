@@ -14,16 +14,19 @@ class AbstractTotalModel:
     :type dt: float
     :param radius: radius of the particles. It as constant for all the particles
     :type radius: float
+    :param contact_radius: distance from which we consider a contact between two particles
+    :type contact_radius: float
     :param surface: Surface of the box. We consider the box as a square, hence the length of the side is equal to the square root of the surface.
     :type surface: float
     :param n_steps: Number of steps that we consider for the total movement of the particles.
     :type n_steps: int
     """
 
-    def __init__(self, n_particles, dt, radius, surface, n_steps, janus):
+    def __init__(self, n_particles, dt, radius, contact_radius, surface, n_steps, janus):
+        self.n_particles = n_particles
         self.dt = dt
         self.radius = radius
-        self.n_particles = n_particles
+        self.contact_radius = contact_radius
         self.side = np.sqrt(surface)
         self.n_steps = n_steps
         self.janus = janus
@@ -92,8 +95,8 @@ class AbstractTotalModel:
         :rtype: tuple of np.arrays.
         """
         point_tree = spatial.cKDTree(self.position_array)
-        eps = 10 ** (-3)
-        contact_pairs = point_tree.query_pairs(2 * self.radius + eps, output_type='ndarray')
+        eps = 10 ** (-3) * self.radius
+        contact_pairs = point_tree.query_pairs(self.contact_radius + eps, output_type='ndarray')
         contact_index = np.unique(contact_pairs)
         return contact_pairs, contact_index
 
@@ -116,15 +119,18 @@ class AbstractTotalModel:
 
         :param step: step of the iteration. It ranges from 0 to self.n_steps-1
         :type step: int
+        :param pairs: array of all the pairs of particles.
+        :type pairs: np.array
         """
+        # For Janus particles we only consider the contact if the particles face each other.
         if self.janus:
             contact_i_array = pairs[:, 0]
             contact_j_array = pairs[:, 1]
             velocity_i_array, velocity_j_array = self.velocities_array[contact_i_array], \
                 self.velocities_array[contact_j_array]
+            # Calculation of the particles that are face to face.
             truth_array = np.einsum('ij,ij->i', velocity_j_array, velocity_i_array) <= 0
-            truth_index = np.where(truth_array)
-            pairs = pairs[truth_index]
+            pairs = pairs[truth_array]
 
         time_pairs = np.append(step * self.dt * np.ones((pairs.shape[0], 1)), pairs, axis=1)
         self.tij = np.append(self.tij, time_pairs, axis=0)
@@ -142,6 +148,8 @@ class AbstractBwsAbpModel(AbstractTotalModel):
     :type dt: float or int
     :param radius: radius of the particles. It as constant for all the particles
     :type radius: float or int
+    :param contact_radius: distance from which we consider a contact between two particles
+    :type contact_radius: float
     :param n_particles: Number of particles in the box
     :type n_particles: int
     :param surface: Surface of the box. We consider the box as a square, hence the length of the side is equal to the square root of the surface.
@@ -153,10 +161,10 @@ class AbstractBwsAbpModel(AbstractTotalModel):
     :param stop: stop the particle each time it encounters another one.
 
     """
-    def __init__(self, v, n_particles, dt, radius, surface, n_steps, janus, stop):
+    def __init__(self, v, n_particles, dt, radius, contact_radius, surface, n_steps, janus, stop):
         self.v = v
         self.stop = stop
-        super().__init__(n_particles, dt, radius, surface, n_steps, janus)
+        super().__init__(n_particles, dt, radius, contact_radius, surface, n_steps, janus)
         self.position_array = self.initial_positions()
         self.velocities_array = np.zeros((self.n_particles, 2))
         self.random_velocities(np.arange(0, n_particles, dtype=int))
@@ -198,8 +206,9 @@ class AbstractBwsAbpModel(AbstractTotalModel):
         :param index: index of the velocities to update
         :type index: np.array
         """
-        self.velocities_array[index, 0] = (np.random.rand(index.size, 1).flatten() - 0.5) * 2 * self.v
-        alg = np.random.choice([-1, 1], index.size)
+        index_size = index.size
+        self.velocities_array[index, 0] = (np.random.rand(index_size, 1).flatten() - 0.5) * 2 * self.v
+        alg = np.random.choice([-1, 1], index_size)
         self.velocities_array[index, 1] = alg * np.sqrt(self.v ** 2 - self.velocities_array[index, 0] ** 2)
 
     def border(self):
@@ -212,22 +221,20 @@ class AbstractBwsAbpModel(AbstractTotalModel):
         index_max = np.where(self.position_array + self.radius >= self.side)
         self.random_velocities(index_min[0])
         self.random_velocities(index_max[0])
-        index_min, column_min = np.where(np.logical_and(self.position_array - self.radius <= 0,
-                                                        self.velocities_array <= 0))
-        index_max, column_max = np.where(np.logical_and(self.position_array + self.radius >= self.side,
-                                                        self.velocities_array >= 0))
-        index_min_size = index_min.size
-        index_max_size = index_max.size
+        mask_min = np.logical_and(self.position_array - self.radius <= 0, self.velocities_array <= 0)
+        mask_max = np.logical_and(self.position_array + self.radius >= self.side, self.velocities_array >= 0)
+        mask_min_size = np.count_nonzero(mask_min)
+        mask_max_size = np.count_nonzero(mask_max)
 
-        if index_min_size > 0:
-            alg = np.random.choice([-1, 1], index_min_size)
-            self.velocities_array[index_min, column_min] = 0
-            self.velocities_array[index_min, 1-column_min] = alg * self.v
+        if mask_min_size > 0:
+            alg = np.random.choice([-1, 1], mask_min_size)
+            self.velocities_array[mask_min] = 0
+            self.velocities_array[mask_min[:, [1, 0]]] = alg * self.v
 
-        if index_max_size > 0:
-            alg = np.random.choice([-1, 1], index_max_size)
-            self.velocities_array[index_max, column_max] = 0
-            self.velocities_array[index_max, 1-column_max] = alg * self.v
+        if mask_max_size > 0:
+            alg = np.random.choice([-1, 1], mask_max_size)
+            self.velocities_array[mask_max] = 0
+            self.velocities_array[mask_max[:, [1, 0]]] = alg * self.v
 
     def update_velocities_stop(self, contact_pairs, contact_index):
         """
@@ -240,7 +247,10 @@ class AbstractBwsAbpModel(AbstractTotalModel):
         :param contact_index: array of indexes of all the particles in contact
         :type contact_index: np.array
         """
+        # Calculation of random velocities for the particles in contact
         self.random_velocities(contact_index)
+
+        # Computation of all the necessary arrays for the call of the projection function
         i_index_array, j_index_array = contact_pairs[:, 0], contact_pairs[:, 1]
         velocity_i_array, velocity_j_array = self.velocities_array[i_index_array], self.velocities_array[
             j_index_array]
@@ -249,16 +259,19 @@ class AbstractBwsAbpModel(AbstractTotalModel):
         distance_array = np.linalg.norm(centers_array, axis=-1).reshape(-1, 1)
         self.position_array[i_index_array] = position_i_array - (
                 2 * self.radius - distance_array) * centers_array / distance_array
-        truth_array = projection(centers_array, velocity_i_array, velocity_j_array)
+
+        # Call of the projection function -> if velocity vectors face each other, the particles stay in contact.
+        truth_array = self.projection(centers_array, velocity_i_array, velocity_j_array)
         velocity_pairs_null = np.where(np.logical_not(truth_array))[0]
         velocity_null_index = contact_pairs[velocity_pairs_null].ravel()
         self.velocities_array[velocity_null_index] = 0
 
     def iter_movement(self, step, animation=False):
-        """This function updates the self.position_array at time step*dt. The function takes the position of the array
+        """
+        This function updates the self.position_array at time step*dt. The function takes the position of the array
         (x, y) and adds an infinitesimal step (dx, dy). (dx, dy) is equal to (vx*dt, vy*dt). (vx, vy) is updated at
         each step in function of what model is used.  Hence the new position is (x+dx, y+dy). The borders of the box are
-         also considered with the self.border() function.
+        also considered with the self.border() function.
 
         :param step: step of the iteration. It ranges from 0 to self.n_steps-1
         :type step: int
@@ -272,6 +285,7 @@ class AbstractBwsAbpModel(AbstractTotalModel):
             if contact_index.size > 0:
                 self.update_velocities(contact_pairs, contact_index)
 
+        # if self.stop is set top stop, the contact_pairs don't matter for the update_velocities array.
         else:
             self.update_velocities(None, None)
 
@@ -284,8 +298,8 @@ class AbstractBwsAbpModel(AbstractTotalModel):
     @staticmethod
     def projection(centers_array, velocity_i_array, velocity_j_array):
         """
-        This function returns True if velocity_i and velocity_j face opposite directions considering the vector that links
-        the center of particle i and particle j.
+        This function returns True if velocity_i and velocity_j face opposite directions considering the vector that
+        links the center of particle i and particle j.
 
         :param centers_array: all the vectors that link the centers of particle i and particle j.
         :type centers_array: np.array
@@ -296,6 +310,7 @@ class AbstractBwsAbpModel(AbstractTotalModel):
         :return: True if the two velocity vectors face opposite directions
         :rtype: bool
         """
+        # np.einsum('ij,ij->i', arr1, arr2) is the dot product between each rows of arr1 and arr2
         a = np.einsum('ij,ij->i', centers_array, velocity_i_array)
         b = np.einsum('ij,ij->i', centers_array, velocity_j_array)
         return np.logical_and(a <= 0, b >= 0)

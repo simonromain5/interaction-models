@@ -170,7 +170,7 @@
 <span id="ballistic-motion-with-stop"></span><h1>Ballistic motion with stop<a class="headerlink" href="#module-ballisticwithstop" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="ballisticwithstop.BallStop">
-<em class="property">class </em><code class="descclassname">ballisticwithstop.</code><code class="descname">BallStop</code><span class="sig-paren">(</span><em>v</em>, <em>n_particles</em>, <em>dt=20</em>, <em>radius=1</em>, <em>surface=10000</em>, <em>n_steps=2000</em>, <em>brownian=False</em>, <em>janus=False</em><span class="sig-paren">)</span><a class="headerlink" href="#ballisticwithstop.BallStop" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">ballisticwithstop.</code><code class="descname">BallStop</code><span class="sig-paren">(</span><em>v</em>, <em>n_particles</em>, <em>dt=20</em>, <em>radius=1</em>, <em>contact_radius=2</em>, <em>surface=10000</em>, <em>n_steps=2000</em>, <em>brownian=False</em>, <em>janus=False</em><span class="sig-paren">)</span><a class="headerlink" href="#ballisticwithstop.BallStop" title="Permalink to this definition">¶</a></dt>
 <dd><p>This class represents the ballistic motion of particles in 2 dimensions with a stop at each contact. The motion of
 the particles is restricted in a box and is not elastic. When two particles are in contact, their new velocity
 vectors are taken randomly. One of the option of the class is to set brownian to True. In this case, the particle
@@ -184,6 +184,7 @@ will ally ballistic motion and a brownian motion.</p>
 <li><strong>n_particles</strong> (<em>int</em>) – Number of particles in the box</li>
 <li><strong>dt</strong> (<em>float</em><em>, </em><em>optional</em>) – 20 by default. Increment of time for each step.</li>
 <li><strong>radius</strong> (<em>float</em><em>, </em><em>optional</em>) – 1 by default. radius of the particles. It as constant for all the particles</li>
+<li><strong>contact_radius</strong> (<em>float</em>) – distance from which we consider a contact between two particles</li>
 <li><strong>surface</strong> (<em>float</em><em>, </em><em>optional</em>) – 10000 by default. Surface of the box. Box is a square, hence length_side = square_root(surface)</li>
 <li><strong>n_steps</strong> (<em>int</em><em>, </em><em>optional</em>) – 2000 by default. Number of steps that we consider for the total movement of the particles.</li>
 <li><strong>brownian</strong> (<em>bool</em><em>, </em><em>optional</em>) – False by default. Adds a brownian motion to the particles if set to True.</li>
@@ -197,6 +198,7 @@ will ally ballistic motion and a brownian motion.</p>
 <dt id="ballisticwithstop.BallStop.update_velocities">
 <code class="descname">update_velocities</code><span class="sig-paren">(</span><em>contact_pairs</em>, <em>contact_index</em><span class="sig-paren">)</span><a class="headerlink" href="#ballisticwithstop.BallStop.update_velocities" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function updates the velocities of all the particles. For all the particles that are not in contact with
+This function updates the velocities of all the particles. For all the particles that are not in contact with
 another particle, then their velocities are not updated, unless self.brownian is set to True (The particles will
 have a brownian motion). For all the particles that are in contact with another particle, then their velocities
 are updated randomly. Consider two particles i and j, and the vector u that link the center of i with the center

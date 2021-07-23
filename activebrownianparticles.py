@@ -17,6 +17,8 @@ class Vicsek(bm.AbstractBwsAbpModel):
     :type dt: float, optional
     :param radius: 1 by default. radius of the particles. It as constant for all the particles
     :type radius: float, optional
+    :param contact_radius: distance from which we consider a contact between two particles
+    :type contact_radius: float
     :param surface: 10000 by default. Surface of the box. Box is a square, hence length_side = square_root(surface)
     :type surface: float, optional
     :param n_steps: 2000 by default. Number of steps that we consider for the total movement of the particles.
@@ -27,8 +29,9 @@ class Vicsek(bm.AbstractBwsAbpModel):
     :type stop: bool, optional
         """
 
-    def __init__(self, v, n_particles, noise, dt=20, radius=1, surface=10000, n_steps=2000, janus=False, stop=False):
-        super().__init__(v, n_particles, dt, radius, surface, n_steps, janus, stop)
+    def __init__(self, v, n_particles, noise, dt=20, radius=1, contact_radius=2, surface=10000, n_steps=2000,
+                 janus=False, stop=False):
+        super().__init__(v, n_particles, dt, radius, contact_radius, surface, n_steps, janus, stop)
         self.noise = noise
 
     def mean_angle(self, index):

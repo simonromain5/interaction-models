@@ -74,7 +74,7 @@ To convert a .dat experimental file into a tij_array you need to run the followi
 Tij interpreter
 ***************
 
-The timeline function allows to convert the tij data array into a convenient timeline_arary. The interesting data is extracted from the tij_arrays and is represented in four different graphs (Contact time distribution, Intercontact time distribution, number of contacts dsitribution and weight distribution).
+The timeline function allows to convert the tij data array into a convenient timeline_array. The interesting data is extracted from the timeline_arrays and is represented in four different graphs (Contact time distribution, Intercontact time distribution, number of contacts dsitribution and weight distribution).
 One convenient function is the compare_quantities function: it allows to compare your numerical data with experimental data. Here is a code to interpret the data:
 
 .. code-block:: py

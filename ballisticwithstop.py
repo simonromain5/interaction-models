@@ -17,6 +17,8 @@ class BallStop(bm.AbstractBwsAbpModel):
     :type dt: float, optional
     :param radius: 1 by default. radius of the particles. It as constant for all the particles
     :type radius: float, optional
+    :param contact_radius: distance from which we consider a contact between two particles
+    :type contact_radius: float
     :param surface: 10000 by default. Surface of the box. Box is a square, hence length_side = square_root(surface)
     :type surface: float, optional
     :param n_steps: 2000 by default. Number of steps that we consider for the total movement of the particles.
@@ -27,13 +29,15 @@ class BallStop(bm.AbstractBwsAbpModel):
     :type janus: bool, optional
     """
 
-    def __init__(self, v, n_particles, dt=20, radius=1, surface=10000, n_steps=2000, brownian=False, janus=False):
+    def __init__(self, v, n_particles, dt=20, radius=1, contact_radius=2, surface=10000, n_steps=2000,
+                 brownian=False, janus=False):
         self.v = v
         self.brownian = brownian
-        super().__init__(v, n_particles, dt, radius, surface, n_steps, janus, True)
+        super().__init__(v, n_particles, dt, radius, contact_radius, surface, n_steps, janus, True)
 
     def update_velocities(self, contact_pairs, contact_index):
         """
+        This function updates the velocities of all the particles. For all the particles that are not in contact with
         This function updates the velocities of all the particles. For all the particles that are not in contact with
         another particle, then their velocities are not updated, unless self.brownian is set to True (The particles will
         have a brownian motion). For all the particles that are in contact with another particle, then their velocities

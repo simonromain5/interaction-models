@@ -170,7 +170,7 @@
 <span id="brownian-motion"></span><h1>Brownian motion<a class="headerlink" href="#module-brownian" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="brownian.BrownianMotion">
-<em class="property">class </em><code class="descclassname">brownian.</code><code class="descname">BrownianMotion</code><span class="sig-paren">(</span><em>diff</em>, <em>n_particles</em>, <em>dt=20</em>, <em>radius=1</em>, <em>surface=10000</em>, <em>n_steps=2000</em>, <em>janus=False</em><span class="sig-paren">)</span><a class="headerlink" href="#brownian.BrownianMotion" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">brownian.</code><code class="descname">BrownianMotion</code><span class="sig-paren">(</span><em>diff</em>, <em>n_particles</em>, <em>dt=20</em>, <em>radius=1</em>, <em>contact_radius=2</em>, <em>surface=10000</em>, <em>n_steps=2000</em>, <em>janus=False</em><span class="sig-paren">)</span><a class="headerlink" href="#brownian.BrownianMotion" title="Permalink to this definition">¶</a></dt>
 <dd><p>This class represents the Brownian motion of particles in 2 dimensions. The motion of the particles is restricted in
 a box. We consider the particles as ghost particles: they can intermingle.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -180,6 +180,7 @@ a box. We consider the particles as ghost particles: they can intermingle.</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>dt</strong> (<em>float</em><em> or </em><em>int</em>) – Increment of time for each step. Constant * dt is the variance of the normal distribution that we use to calculate the increment of all the positions at each step.</li>
 <li><strong>radius</strong> (<em>float</em><em> or </em><em>int</em>) – radius of the particles. It as constant for all the particles</li>
+<li><strong>contact_radius</strong> (<em>float</em>) – distance from which we consider a contact between two particles</li>
 <li><strong>n_particles</strong> (<em>int</em>) – Number of particles in the box</li>
 <li><strong>surface</strong> (<em>float</em><em> or </em><em>int</em>) – Surface of the box. We consider the box as a square, hence the length of the side is equal to the square root of the surface.</li>
 <li><strong>n_steps</strong> (<em>int</em>) – Number of steps that we consider for the total movement of the particles.</li>
