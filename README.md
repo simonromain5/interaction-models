@@ -2,6 +2,10 @@
 
 This library implements several models of human face-to-face interactions in a closed environment. The models range from the brownian motion model to some specific pedestrian models.
 
+## How to access the documentation?
+
+Go to build/html/ and then click on whater .html file, you will get to access to the documentation.
+
 ## How to run the code ?
 
 First, you need to choose the model you want to test.
