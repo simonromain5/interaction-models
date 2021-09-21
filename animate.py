@@ -1,5 +1,4 @@
 import tkinter as tk
-import common_calc as cc
 import numpy as np
 
 
